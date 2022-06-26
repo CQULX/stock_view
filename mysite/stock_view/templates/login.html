@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+{% if messages %}
+<script>
+    {% for msg in messages %}
+        alert('{{ msg.message }}');
+    {% endfor %}
+</script>
+{% endif %}
+    <form method="post" action="/login/">
+    <div class="box">
+        <h2>登录</h2>
+        <div class="input-box">
+            <label for="account">账号: </label>
+            <input type="text" name="account" id="account">
+        </div>
+        <div class="input-box">
+            <label for="password">密码: </label>
+            <input type="password" name="password" id="password">
+        </div>
+        <div class="btn-box">
+            <div>
+                <button type="submit">登录</button>
+                <button type="button" onclick="window.location.href='../register'">注册</button>
+            </div>
+            <span style="color:red;">{{error_msg}}</span>
+
+        </div>
+
+    </div>
+    </form>
+
+<body>
+
+</body>
+</html>
