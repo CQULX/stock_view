@@ -2,6 +2,7 @@ from django.shortcuts import redirect, render,HttpResponse
 from django.views.decorators.csrf import csrf_exempt 
 from stock_view.models import UserInfo
 from django.contrib import messages
+from stock_view.models import StockInfo
 # Create your views here.
 def index(request):
     return render(request,"index.html")
@@ -40,6 +41,21 @@ def register(request):
         UserInfo.objects.create(name=Name,password=pwd)
         messages.success(request, '注册成功')
         return redirect(login)
-    
+
+# def Allrank(request):
+#     objs=StockInfo.objects.all()
+#     return render(request,"general.html",locals())
+
+def Allrank(request):
+    return render(request,"general.html",{'data':[{'no':stock.no,'id':stock.stock_id,'name':stock.stock_name,
+    'price':stock.now_price,'changepercent':stock.changepercent,'changeamount':stock.changeamount,
+    'turnover':stock.turnover,'vol':stock.vol,'swing':stock.swing,'high_price':stock.high_price,
+    'low_price':stock.low_price,'open_price':stock.open_price,'close_price_yesterday':stock.close_price_yesterday,
+    'quantity_relative_ratio':stock.quantity_relative_ratio,'turnover_rate':stock.turnover_rate,'pe':stock.pe,
+    'pb':stock.pb,'total_value':stock.total_value,'higher_speed':stock.higher_speed,
+    'five_min_up_down':stock.five_min_up_down,'sixty_day_up_down':stock.sixty_day_up_down,
+    'yeartodate_up_down':stock.yeartodate_up_down} for stock in StockInfo.objects.all()]})
+
+
 def test(request):
     return render(request,"test.html",{"a":[1,2,3,4,5,6]})
