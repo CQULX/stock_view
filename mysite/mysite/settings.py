@@ -87,7 +87,7 @@ DATABASES={
         'NAME':'stock',
         'USER':'lx',
         'PASSWORD':'123456',
-        'HOST':'10.236.66.20',
+        'HOST':'10.236.66.8',
         'PORT':'3306',
     }
 }
