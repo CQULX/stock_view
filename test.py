@@ -3,3 +3,4 @@ stock_df=ak.stock_zh_a_hist(symbol='300750',period='daily',start_date='20220101'
 print(stock_df)
 print("mahao")
 print(000)
+print(1)
