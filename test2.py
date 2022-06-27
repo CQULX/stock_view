@@ -5,3 +5,4 @@ print(1111111)
 print('deng')
 print("m")
 print("sssssssss")
+a=101
