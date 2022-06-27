@@ -6,7 +6,5 @@ print('deng')
 print("m")
 print("sssssssss")
 print(1222)
-as=0
-print(1222)
-as=0
 dwdwdaw=0
+print("again and again")
