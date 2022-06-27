@@ -6,3 +6,4 @@ print('deng')
 print("m")
 print("sssssssss")
 print(1222)
+as=0
