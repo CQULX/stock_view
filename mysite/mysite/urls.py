@@ -24,5 +24,6 @@ urlpatterns = [
     path('user/list/',views.user_list),
     path('user/add/',views.user_add),
     path('register/',views.register),
-    path('test/',views.test)
+    path('test/',views.test),
+    path('trade_ranking_list/',views.trl)
 ]

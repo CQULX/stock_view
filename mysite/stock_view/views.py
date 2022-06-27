@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render,HttpResponse
 from django.views.decorators.csrf import csrf_exempt 
-from stock_view.models import UserInfo
+from stock_view.models import UserInfo, TradeInfo
 from django.contrib import messages
 # Create your views here.
 def index(request):
@@ -43,3 +43,9 @@ def register(request):
     
 def test(request):
     return render(request,"test.html",{"a":[1,2,3,4,5,6]})
+
+
+def trl(request):
+    trade_list = TradeInfo.objects.all()
+
+    return render(request,"trade_ranking_list.html",{"trade_list":trade_list})
