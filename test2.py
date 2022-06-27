@@ -6,3 +6,4 @@ print('deng')
 print("m")
 print("sssssssss")
 a=101
+print("张绍卿大傻子")
