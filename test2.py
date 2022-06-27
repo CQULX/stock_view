@@ -5,5 +5,8 @@ print(1111111)
 print('deng')
 print("m")
 print("sssssssss")
-print("helloagain")
-
+print(1222)
+as=0
+print(1222)
+as=0
+dwdwdaw=0
