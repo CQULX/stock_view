@@ -1,21 +1,19 @@
 from django.shortcuts import redirect, render,HttpResponse
 from django.views.decorators.csrf import csrf_exempt 
-from stock_view.models import UserInfo
-from stock_view.code.get_now_data import get_1a0001,get_399001,get_399006
+from stock_view.code.get_now_data import get_1a0001,get_399001,get_399006,get_numUpAndDown
 from stock_view.models import UserInfo, TradeInfo
 from django.contrib import messages
 from stock_view.models import StockInfo
 # Create your views here.
 def index(request):
+
     shang_time,shang_value=get_1a0001()
     shang_time[0]='0930'
     shen_time,shen_value=get_399001()
     shen_time[0]='0930'
     chuang_time,chuang_value=get_399006()
     chuang_time[0]='0930'
-    print(shang_time)
-    print(shen_time)
-    print(chuang_time)
+    up_and_down=get_numUpAndDown()
     # for i in range(0,len(shang_time)):
     #     a=list(shang_time[i])
     #     # a.insert(-2,':')
@@ -24,8 +22,11 @@ def index(request):
     shang_value =list(map(float,shang_value))
     shen_value =list(map(float,shen_value))
     chuang_value =list(map(float,chuang_value))
-    print(shen_value)
-    print(chuang_value)
+    stock_sum=0
+    for x in up_and_down:
+        stock_sum=stock_sum+x
+    up_rate=(up_and_down[0]+up_and_down[1]+up_and_down[2])/stock_sum
+    down_rate=(up_and_down[3]+up_and_down[4]+up_and_down[5])/stock_sum
     return render(request,"index.html",locals())
 
 def user_list(request):
@@ -97,4 +98,10 @@ def trl(request):
     return render(request,"trade_ranking_list.html",{"trade_list":trade_list})
 
 def stock_search(request):
-    return render(request,"stock_search.html")
+    id_name={}
+    stock_name=[]
+    for stock in StockInfo.objects.all():
+        id_name[stock.stock_id]=stock.stock_name
+        stock_name.append(stock.stock_name)
+    print(stock_name)
+    return render(request,"stock_search.html",locals())

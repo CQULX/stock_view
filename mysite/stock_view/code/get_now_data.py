@@ -1,5 +1,6 @@
 import requests
 import bs4
+import akshare as ak
 import re
 def get_1a0001():
     """
@@ -70,4 +71,15 @@ def get_upAndDown():
     request = session.get(url1, headers=header)
     print(request.text)
 
-print(get_upAndDown())
+def get_numUpAndDown():
+    new_df=ak.stock_zh_a_spot_em()
+    listPer=list(new_df['涨跌幅'])
+    num=[]
+    num.append(len([i for i in listPer if i >=10]))
+    num.append(len([i for i in listPer if i >=5 and i<10]))
+    num.append(len([i for i in listPer if i >=0 and i<5]))
+    num.append(len([i for i in listPer if i >=-5 and i<0]))
+    num.append(len([i for i in listPer if i>=-10 and i <-5]))
+    num.append(len([i for i in listPer if i <-10]))
+    return num
+# print(get_upAndDown())
