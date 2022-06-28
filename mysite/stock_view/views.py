@@ -47,7 +47,7 @@ def register(request):
 #     return render(request,"general.html",locals())
 
 def Allrank(request):
-    return render(request,"general.html",{'data':[{'no':stock.no,'id':stock.stock_id,'name':stock.stock_name,
+    return render(request,"Allrank.html",{'data':[{'no':stock.no,'id':stock.stock_id,'name':stock.stock_name,
     'price':stock.now_price,'changepercent':stock.changepercent,'changeamount':stock.changeamount,
     'turnover':stock.turnover,'vol':stock.vol,'swing':stock.swing,'high_price':stock.high_price,
     'low_price':stock.low_price,'open_price':stock.open_price,'close_price_yesterday':stock.close_price_yesterday,

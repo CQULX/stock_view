@@ -18,6 +18,7 @@ from django.urls import path
 from stock_view import views
 
 urlpatterns = [
+    path('Allrank.html/',views.Allrank),
     path('',views.login),
     path('index/', views.index),
     path('login/',views.login),
