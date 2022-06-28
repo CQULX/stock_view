@@ -5,6 +5,7 @@ from stock_view.code.get_now_data import get_1a0001
 from stock_view.models import UserInfo, TradeInfo
 from django.contrib import messages
 from stock_view.models import StockInfo
+from stock_view.models import Favorite
 # Create your views here.
 def index(request):
     shang_time,shang_value=get_1a0001()
@@ -85,3 +86,10 @@ def trl(request):
     trade_list = TradeInfo.objects.all()
 
     return render(request,"trade_ranking_list.html",{"trade_list":trade_list})
+
+
+
+
+def starbox(request):
+    star_list=Favorite.objects.all()
+    return render(request, "starbox.html", {"star_list": star_list})
