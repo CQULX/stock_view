@@ -1,11 +1,22 @@
 from django.shortcuts import redirect, render,HttpResponse
 from django.views.decorators.csrf import csrf_exempt 
+from stock_view.models import UserInfo
+from stock_view.code.get_now_data import get_1a0001
 from stock_view.models import UserInfo, TradeInfo
 from django.contrib import messages
 from stock_view.models import StockInfo
 # Create your views here.
 def index(request):
-    return render(request,"index.html")
+    shang_time,shang_value=get_1a0001()
+    shang_time[0]='0930'
+    
+    for i in range(0,len(shang_time)):
+        a=list(shang_time[i])
+        # a.insert(-2,':')
+        shang_time[i]=''.join(a)
+    print(shang_time)
+    shang_value =list(map(float,shang_value))
+    return render(request,"index.html",locals())
 
 def user_list(request):
     return render(request,"user_list.html")
@@ -58,7 +69,16 @@ def Allrank(request):
 
 
 def test(request):
-    return render(request,"test.html",{"a":[1,2,3,4,5,6]})
+    shang_time,shang_value=get_1a0001()
+    shang_time[0]='0930'
+    
+    for i in range(0,len(shang_time)):
+        a=list(shang_time[i])
+        a.insert(-2,':')
+        shang_time[i]=''.join(a)
+    print(shang_time)
+    shang_value =list(map(float,shang_value))
+    return render(request,"test.html",locals())
 
 
 def trl(request):
