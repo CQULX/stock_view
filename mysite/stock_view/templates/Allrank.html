@@ -887,7 +887,11 @@
                           <td>{{stock.low_price}}</td>
                           <td>{{stock.open_price}}</td>
                           <td>{{stock.close_price_yesterday}}</td>
-                          <td>{{stock.changepercent}}</td>
+                          {% if stock.changepercent > 0 %}
+                          <td class="description-percentage text-danger">{{stock.changepercent}}%<i class="fas fa-caret-up"></i></td>
+                          {% else %}
+                          <td class="description-percentage text-success">{{stock.changepercent}}%<i class="fas fa-caret-down"></i></td>
+                          {% endif %}
                           <td>{{stock.changeamount}}</td>
                           <td>{{stock.turnover}}</td>
                           <td>{{stock.vol}}</td>
