@@ -1,12 +1,9 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect, render,HttpResponse
 from django.views.decorators.csrf import csrf_exempt 
-<<<<<<< HEAD
 from stock_view.code.get_now_data import get_1a0001,get_399001,get_399006,get_numUpAndDown
-=======
 from stock_view.models import StockExternal, UserInfo
 from stock_view.code.get_now_data import get_1a0001
->>>>>>> c2e34a1ede105b977cc58f9f6ec8e55a8a72962e
 from stock_view.models import UserInfo, TradeInfo
 from django.contrib import messages
 from stock_view.models import StockInfo
