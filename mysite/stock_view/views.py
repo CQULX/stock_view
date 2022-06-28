@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import redirect, render,HttpResponse
 from django.views.decorators.csrf import csrf_exempt 
 from stock_view.models import StockExternal, UserInfo
@@ -5,6 +6,7 @@ from stock_view.code.get_now_data import get_1a0001
 from stock_view.models import UserInfo, TradeInfo
 from django.contrib import messages
 from stock_view.models import StockInfo
+from stock_view.models import Favorite
 # Create your views here.
 def index(request):
     shang_time,shang_value=get_1a0001()
@@ -86,6 +88,7 @@ def trl(request):
 
     return render(request,"trade_ranking_list.html",{"trade_list":trade_list})
 
+
 def rankByMap(request):
     address={str(i.stock_id).zfill(6):i.stock_address for i in StockExternal.objects.all()}
     return render(request,"rankByMap.html",{'data':[{'no':stock.no,'id':stock.stock_id,'name':stock.stock_name,
@@ -96,3 +99,26 @@ def rankByMap(request):
     'pb':stock.pb,'total_value':stock.total_value,'higher_speed':stock.higher_speed,
     'five_min_up_down':stock.five_min_up_down,'sixty_day_up_down':stock.sixty_day_up_down,
     'yeartodate_up_down':stock.yeartodate_up_down,'address':address.get(stock.stock_id)} for stock in StockInfo.objects.all()]})
+
+
+
+
+def starbox(request):
+    star_list=Favorite.objects.all()
+    return render(request, "starbox.html", {"star_list": star_list})
+
+# 根据id列表批量删除数据
+def deleteProductByIdList(request):
+    mod = Favorite.objects
+    # 获取前端传来的id数组
+    idlist = request.GET.getlist('ids[]')
+    try:
+        # 遍历id数组
+        for id in idlist:
+            # 删除对应id的记录
+            mod.get(id=id).delete()
+        context = {"info": "删除成功"}
+    except Exception as res:
+        context = {"info": str(res)}
+    return JsonResponse({"msg": context})
+
