@@ -145,4 +145,3 @@ def deleteProductByIdList(request):
         context = {"info": str(res)}
     return JsonResponse({"msg": context})
 
->>>>>>> c2e34a1ede105b977cc58f9f6ec8e55a8a72962e
