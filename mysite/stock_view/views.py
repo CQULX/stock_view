@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render,HttpResponse
 from django.views.decorators.csrf import csrf_exempt 
-from stock_view.models import UserInfo
+from stock_view.models import StockExternal, UserInfo
 from stock_view.code.get_now_data import get_1a0001
 from stock_view.models import UserInfo, TradeInfo
 from django.contrib import messages
@@ -85,3 +85,14 @@ def trl(request):
     trade_list = TradeInfo.objects.all()
 
     return render(request,"trade_ranking_list.html",{"trade_list":trade_list})
+
+def rankByMap(request):
+    address={str(i.stock_id).zfill(6):i.stock_address for i in StockExternal.objects.all()}
+    return render(request,"rankByMap.html",{'data':[{'no':stock.no,'id':stock.stock_id,'name':stock.stock_name,
+    'price':stock.now_price,'changepercent':stock.changepercent,'changeamount':stock.changeamount,
+    'turnover':stock.turnover,'vol':stock.vol,'swing':stock.swing,'high_price':stock.high_price,
+    'low_price':stock.low_price,'open_price':stock.open_price,'close_price_yesterday':stock.close_price_yesterday,
+    'quantity_relative_ratio':stock.quantity_relative_ratio,'turnover_rate':stock.turnover_rate,'pe':stock.pe,
+    'pb':stock.pb,'total_value':stock.total_value,'higher_speed':stock.higher_speed,
+    'five_min_up_down':stock.five_min_up_down,'sixty_day_up_down':stock.sixty_day_up_down,
+    'yeartodate_up_down':stock.yeartodate_up_down,'address':address.get(stock.stock_id)} for stock in StockInfo.objects.all()]})
