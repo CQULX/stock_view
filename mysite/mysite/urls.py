@@ -18,6 +18,7 @@ from django.urls import path
 from stock_view import views
 
 urlpatterns = [
+    path('rankByMap/',views.rankByMap),
     path('Allrank.html/',views.Allrank),
     path('',views.login),
     path('index/', views.index),
@@ -28,4 +29,7 @@ urlpatterns = [
     path('test/',views.test),
     path('trade_ranking_list/',views.trl),
     path('stock_search/',views.stock_search)
+    path('starbox/',views.starbox),
+    path('deleteProductByIdList/',views.deleteProductByIdList,name='deleteProductByIdList')
+
 ]

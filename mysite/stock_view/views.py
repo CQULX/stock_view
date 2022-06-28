@@ -1,9 +1,16 @@
+from django.http import JsonResponse
 from django.shortcuts import redirect, render,HttpResponse
 from django.views.decorators.csrf import csrf_exempt 
+<<<<<<< HEAD
 from stock_view.code.get_now_data import get_1a0001,get_399001,get_399006,get_numUpAndDown
+=======
+from stock_view.models import StockExternal, UserInfo
+from stock_view.code.get_now_data import get_1a0001
+>>>>>>> c2e34a1ede105b977cc58f9f6ec8e55a8a72962e
 from stock_view.models import UserInfo, TradeInfo
 from django.contrib import messages
 from stock_view.models import StockInfo
+from stock_view.models import Favorite
 # Create your views here.
 def index(request):
 
@@ -97,6 +104,7 @@ def trl(request):
 
     return render(request,"trade_ranking_list.html",{"trade_list":trade_list})
 
+
 def stock_search(request):
     id_name={}
     stock_name=[]
@@ -105,3 +113,39 @@ def stock_search(request):
         stock_name.append(stock.stock_name)
     print(stock_name)
     return render(request,"stock_search.html",locals())
+
+
+def rankByMap(request):
+    address={str(i.stock_id).zfill(6):i.stock_address for i in StockExternal.objects.all()}
+    return render(request,"rankByMap.html",{'data':[{'no':stock.no,'id':stock.stock_id,'name':stock.stock_name,
+    'price':stock.now_price,'changepercent':stock.changepercent,'changeamount':stock.changeamount,
+    'turnover':stock.turnover,'vol':stock.vol,'swing':stock.swing,'high_price':stock.high_price,
+    'low_price':stock.low_price,'open_price':stock.open_price,'close_price_yesterday':stock.close_price_yesterday,
+    'quantity_relative_ratio':stock.quantity_relative_ratio,'turnover_rate':stock.turnover_rate,'pe':stock.pe,
+    'pb':stock.pb,'total_value':stock.total_value,'higher_speed':stock.higher_speed,
+    'five_min_up_down':stock.five_min_up_down,'sixty_day_up_down':stock.sixty_day_up_down,
+    'yeartodate_up_down':stock.yeartodate_up_down,'address':address.get(stock.stock_id)} for stock in StockInfo.objects.all()]})
+
+
+
+
+def starbox(request):
+    star_list=Favorite.objects.all()
+    return render(request, "starbox.html", {"star_list": star_list})
+
+# 根据id列表批量删除数据
+def deleteProductByIdList(request):
+    mod = Favorite.objects
+    # 获取前端传来的id数组
+    idlist = request.GET.getlist('ids[]')
+    try:
+        # 遍历id数组
+        for id in idlist:
+            # 删除对应id的记录
+            mod.get(id=id).delete()
+        context = {"info": "删除成功"}
+    except Exception as res:
+        context = {"info": str(res)}
+    return JsonResponse({"msg": context})
+
+>>>>>>> c2e34a1ede105b977cc58f9f6ec8e55a8a72962e
