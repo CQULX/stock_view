@@ -887,10 +887,10 @@
 
               <div class="card-tools">
                 <div class="input-group input-group-sm">
-                  <input type="text" class="form-control" placeholder="Search Mail">
+
                   <div class="input-group-append">
                     <div class="btn btn-primary">
-                      <i class="fas fa-search"></i>
+
                     </div>
                   </div>
                 </div>
@@ -904,7 +904,7 @@
                 <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="far fa-square"></i>
                 </button>
                 <div class="btn-group">
-                  <button type="button" class="btn btn-default btn-sm checkbox-del">
+                  <button type="button" onclick="deleteitem()" class="btn btn-default btn-sm checkbox-del" id="del">
                     <i class="far fa-trash-alt"></i>
                   </button>
                   <button type="button" class="btn btn-default btn-sm">
@@ -915,7 +915,7 @@
                   </button>
                 </div>
                 <!-- /.btn-group -->
-                <button type="button" class="btn btn-default btn-sm">
+                <button type="button" onclick="getVal()" class="btn btn-default btn-sm" id="chose">
                   <i class="fas fa-sync-alt"></i>
                 </button>
                 <div class="float-right">
@@ -939,7 +939,7 @@
                   <tr>
                     <td>
                       <div class="icheck-primary">
-                        <input type="checkbox" value="" id={{ obj.id }}>
+                        <input type="checkbox" name='checkbox1' value={{ obj.id }} id={{ obj.id }} check_id={{ obj.id }}>
                         <label for={{obj.id}}></label>
                       </div>
                     </td>
@@ -1011,21 +1011,7 @@
       }
       $(this).data('clicks', !clicks)
     })
-  $(function () {
-    //Enable check and uncheck all functionality
-    $('.checkbox-del').click(function () {
-      var clicks = $(this).data('clicks')
-      if (clicks) {
-        //Uncheck all checkboxes
-        $('.mailbox-messages input[type=\'checkbox\']').prop('checked', false)
-        $('.checkbox-toggle .far.fa-check-square').removeClass('fa-check-square').addClass('fa-square')
-      } else {
-        //Check all checkboxes
-        $('.mailbox-messages input[type=\'checkbox\']').prop('checked', true)
-        $('.checkbox-toggle .far.fa-square').removeClass('fa-square').addClass('fa-check-square')
-      }
-      $(this).data('clicks', !clicks)
-    })
+
     //Handle starring for font awesome
     $('.mailbox-star').click(function (e) {
       e.preventDefault()
@@ -1039,7 +1025,48 @@
         $this.toggleClass('fa-star-o')
       }
     })
+
+
+
   })
+
+
+var ids = [];
+
+
+
+
+function getVal(){
+
+	var chk_value =[];//定义一个数组
+    $('input[name="checkbox1"]:checked').each(function(){//遍历每一个名字为nodes的复选框，其中选中的执行函数
+    	ids.push($(this).val());//将选中的值添加到数组chk_value中
+    });
+    var groups = ids.join(",");
+    alert("待删除的id为："+groups);
+}
+
+
+
+function deleteitem() {
+
+ if(ids.length != 0){
+	if(confirm("确定删除吗？")){
+		$.ajax({
+		url:"/deleteProductByIdList/",
+		type:"get",
+		data:{"ids":ids},
+		success:function(result){
+			alert(result.msg.info);
+		}
+	});
+	}
+}else {
+	alert('请选择至少一条数据！');
+}
+
+    }
+
 </script>
 </body>
 </html>

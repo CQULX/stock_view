@@ -27,5 +27,6 @@ urlpatterns = [
     path('register/',views.register),
     path('test/',views.test),
     path('trade_ranking_list/',views.trl),
-    path('starbox/',views.starbox)
+    path('starbox/',views.starbox),
+    path('deleteProductByIdList/',views.deleteProductByIdList,name='deleteProductByIdList')
 ]
