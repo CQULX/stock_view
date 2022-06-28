@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render,HttpResponse
 from django.views.decorators.csrf import csrf_exempt 
 from stock_view.models import UserInfo
-from stock_view.code.get_now_data import get_1a0001
+from stock_view.code.get_now_data import get_1a0001,get_399001,get_399006
 from stock_view.models import UserInfo, TradeInfo
 from django.contrib import messages
 from stock_view.models import StockInfo
@@ -9,13 +9,23 @@ from stock_view.models import StockInfo
 def index(request):
     shang_time,shang_value=get_1a0001()
     shang_time[0]='0930'
-    
-    for i in range(0,len(shang_time)):
-        a=list(shang_time[i])
-        # a.insert(-2,':')
-        shang_time[i]=''.join(a)
+    shen_time,shen_value=get_399001()
+    shen_time[0]='0930'
+    chuang_time,chuang_value=get_399006()
+    chuang_time[0]='0930'
     print(shang_time)
+    print(shen_time)
+    print(chuang_time)
+    # for i in range(0,len(shang_time)):
+    #     a=list(shang_time[i])
+    #     # a.insert(-2,':')
+    #     shang_time[i]=''.join(a)
+    # print(shang_time)
     shang_value =list(map(float,shang_value))
+    shen_value =list(map(float,shen_value))
+    chuang_value =list(map(float,chuang_value))
+    print(shen_value)
+    print(chuang_value)
     return render(request,"index.html",locals())
 
 def user_list(request):
@@ -85,3 +95,6 @@ def trl(request):
     trade_list = TradeInfo.objects.all()
 
     return render(request,"trade_ranking_list.html",{"trade_list":trade_list})
+
+def stock_search(request):
+    return render(request,"stock_search.html")

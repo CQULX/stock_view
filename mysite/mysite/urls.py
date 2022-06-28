@@ -26,5 +26,6 @@ urlpatterns = [
     path('user/add/',views.user_add),
     path('register/',views.register),
     path('test/',views.test),
-    path('trade_ranking_list/',views.trl)
+    path('trade_ranking_list/',views.trl),
+    path('stock_search/',views.stock_search)
 ]

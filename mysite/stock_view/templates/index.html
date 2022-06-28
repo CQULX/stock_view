@@ -1411,57 +1411,7 @@
                 <!-- /.row -->
               </div>
             </div>
-            <!-- /.card -->
-
-            <!-- solid sales graph -->
-            <div class="card bg-gradient-info">
-              <div class="card-header border-0">
-                <h3 class="card-title">
-                  <i class="fas fa-th mr-1"></i>
-                  Sales Graph
-                </h3>
-
-                <div class="card-tools">
-                  <button type="button" class="btn bg-info btn-sm" data-card-widget="collapse">
-                    <i class="fas fa-minus"></i>
-                  </button>
-                  <button type="button" class="btn bg-info btn-sm" data-card-widget="remove">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </div>
-              <div class="card-body">
-                <canvas class="chart" id="line-chart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-              </div>
-              <!-- /.card-body -->
-              <div class="card-footer bg-transparent">
-                <div class="row">
-                  <div class="col-4 text-center">
-                    <input type="text" class="knob" data-readonly="true" value="20" data-width="60" data-height="60"
-                           data-fgColor="#39CCCC">
-
-                    <div class="text-white">Mail-Orders</div>
-                  </div>
-                  <!-- ./col -->
-                  <div class="col-4 text-center">
-                    <input type="text" class="knob" data-readonly="true" value="50" data-width="60" data-height="60"
-                           data-fgColor="#39CCCC">
-
-                    <div class="text-white">Online</div>
-                  </div>
-                  <!-- ./col -->
-                  <div class="col-4 text-center">
-                    <input type="text" class="knob" data-readonly="true" value="30" data-width="60" data-height="60"
-                           data-fgColor="#39CCCC">
-
-                    <div class="text-white">In-Store</div>
-                  </div>
-                  <!-- ./col -->
-                </div>
-                <!-- /.row -->
-              </div>
-              <!-- /.card-footer -->
-            </div>
+            
             <!-- /.card -->
             <div class="card bg-gradient-info">
               <div class="card-header border-0">
@@ -1479,9 +1429,9 @@
                   </button>
                 </div>
               </div>
-              <div class="card-body" id="main" style="width: 500px;height:400px;"></div>
+              <div class="card-body" id="shang_zheng" style="width: 500px;height:400px;"></div>
               <script type="text/javascript">
-                var myChart = echarts.init(document.getElementById("main"));
+                var myChart = echarts.init(document.getElementById("shang_zheng"));
                 var x_axis_data=[];   
                 {% for x in shang_time %}
                   x_axis_data.push({{x}})
@@ -1538,34 +1488,160 @@
                 // 使用刚指定的配置项和数据显示图表。
                   myChart.setOption(option);
               </script>
-              <!-- /.card-body -->
-              <div class="card-footer bg-transparent">
-                <div class="row">
-                  <div class="col-4 text-center">
-                    <input type="text" class="knob" data-readonly="true" value="20" data-width="60" data-height="60"
-                           data-fgColor="#39CCCC">
+            </div>
+             <!-- /.card -->
+             <div class="card bg-gradient-info">
+              <div class="card-header border-0">
+                <h3 class="card-title">
+                  <i class="fas fa-th mr-1"></i>
+                  深证指数
+                </h3>
 
-                    <div class="text-white">Mail-Orders</div>
-                  </div>
-                  <!-- ./col -->
-                  <div class="col-4 text-center">
-                    <input type="text" class="knob" data-readonly="true" value="50" data-width="60" data-height="60"
-                           data-fgColor="#39CCCC">
-
-                    <div class="text-white">Online</div>
-                  </div>
-                  <!-- ./col -->
-                  <div class="col-4 text-center">
-                    <input type="text" class="knob" data-readonly="true" value="30" data-width="60" data-height="60"
-                           data-fgColor="#39CCCC">
-
-                    <div class="text-white">In-Store</div>
-                  </div>
-                  <!-- ./col -->
+                <div class="card-tools">
+                  <button type="button" class="btn bg-info btn-sm" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <button type="button" class="btn bg-info btn-sm" data-card-widget="remove">
+                    <i class="fas fa-times"></i>
+                  </button>
                 </div>
-                <!-- /.row -->
               </div>
-              <!-- /.card-footer -->
+              <div class="card-body" id="shen_zheng" style="width: 500px;height:400px;"></div>
+              <script type="text/javascript">
+                var myChart = echarts.init(document.getElementById("shen_zheng"));
+                var x_axis_data=[];   
+                {% for x in shen_time %}
+                  x_axis_data.push({{x}})
+                {% endfor %}
+                var option = {
+                  xAxis: {
+                    type: "category",
+                    boundaryGap: false,
+                    data:x_axis_data,
+                    axisLine: {
+                      lineStyle: {
+                        color: "#000000"
+                      }
+                    }
+                  },
+                  yAxis: [
+                    {
+                      type: "value",
+                      min:2000,
+                      max:3000,
+                      axisLine: {
+                        lineStyle: {
+                          color: "#000000"
+                        }
+                      },
+                      splitLine: {
+                        //网格线
+                        show: false
+                      }
+                    }
+                  ],
+                  series: [
+                    {
+                      data:{{shen_value}},
+                      type: "line",
+                      areaStyle: {
+                        color: "white"
+                      },
+                      lineStyle: {
+                        color: "green"
+                      }
+                    }
+                  ],
+                  dataZoom: [
+                    {
+                      id: 'dataZoomX',
+                      type: 'inside',
+                      xAxisIndex: [0],
+                      filterMode: 'none',
+                      start: 0,
+                      end: 50,
+                    }
+                  ]}
+                // 使用刚指定的配置项和数据显示图表。
+                  myChart.setOption(option);
+              </script>
+            </div>
+             <!-- /.card -->
+             <div class="card bg-gradient-info">
+              <div class="card-header border-0">
+                <h3 class="card-title">
+                  <i class="fas fa-th mr-1"></i>
+                  创业板指
+                </h3>
+
+                <div class="card-tools">
+                  <button type="button" class="btn bg-info btn-sm" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <button type="button" class="btn bg-info btn-sm" data-card-widget="remove">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="card-body" id="chuang_ban" style="width: 500px;height:400px;"></div>
+              <script type="text/javascript">
+                var myChart = echarts.init(document.getElementById("chuang_ban"));
+                var x_axis_data=[];   
+                {% for x in chuang_time %}
+                  x_axis_data.push({{x}})
+                {% endfor %}
+                var option = {
+                  xAxis: {
+                    type: "category",
+                    boundaryGap: false,
+                    data:x_axis_data,
+                    axisLine: {
+                      lineStyle: {
+                        color: "#000000"
+                      }
+                    }
+                  },
+                  yAxis: [
+                    {
+                      type: "value",
+                      min:2000,
+                      max:3000,
+                      axisLine: {
+                        lineStyle: {
+                          color: "#000000"
+                        }
+                      },
+                      splitLine: {
+                        //网格线
+                        show: false
+                      }
+                    }
+                  ],
+                  series: [
+                    {
+                      data:{{chuang_value}},
+                      type: "line",
+                      areaStyle: {
+                        color: "white"
+                      },
+                      lineStyle: {
+                        color: "green"
+                      }
+                    }
+                  ],
+                  dataZoom: [
+                    {
+                      id: 'dataZoomX',
+                      type: 'inside',
+                      xAxisIndex: [0],
+                      filterMode: 'none',
+                      start: 0,
+                      end: 50,
+                    }
+                  ]}
+                // 使用刚指定的配置项和数据显示图表。
+                  myChart.setOption(option);
+              </script>
             </div>
             <!-- Calendar -->
             <div class="card bg-gradient-success">
