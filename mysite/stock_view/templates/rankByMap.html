@@ -1070,8 +1070,11 @@
                 }; 
                 st[0].onclick = function(){
                     document.getElementById('rankTitle').innerText= china[state]['name']+'排行榜';
-                    document.getElementById('Mysearch2').value = china[state]['name'];
-                    input.from-control
+                    var table = $('#example1').DataTable();
+                    table
+		            .column(11)
+		            .search(china[state]['name'])
+		            .draw();
                 };
              })(china[state]['path'], state);
         }
