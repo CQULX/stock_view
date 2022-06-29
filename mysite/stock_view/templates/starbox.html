@@ -907,17 +907,17 @@
                   <button type="button" onclick="deleteitem()" class="btn btn-default btn-sm checkbox-del" id="del">
                     <i class="far fa-trash-alt"></i>
                   </button>
-                  <button type="button" class="btn btn-default btn-sm">
-                    <i class="fas fa-reply"></i>
-                  </button>
-                  <button type="button" class="btn btn-default btn-sm">
-                    <i class="fas fa-share"></i>
-                  </button>
+{#                  <button type="button" class="btn btn-default btn-sm">#}
+{#                    <i class="fas fa-reply"></i>#}
+{#                  </button>#}
+{#                  <button type="button" class="btn btn-default btn-sm">#}
+{#                    <i class="fas fa-share"></i>#}
+{#                  </button>#}
                 </div>
                 <!-- /.btn-group -->
-                <button type="button" onclick="getVal()" class="btn btn-default btn-sm" id="chose">
-                  <i class="fas fa-sync-alt"></i>
-                </button>
+{#                <button type="button" onclick="getVal()" class="btn btn-default btn-sm" id="chose">#}
+{#                  <i class="fas fa-sync-alt"></i>#}
+{#                </button>#}
                 <div class="float-right">
                   1-50/200
                   <div class="btn-group">
@@ -1035,21 +1035,24 @@ var ids = [];
 
 
 
-
-function getVal(){
-
-	var chk_value =[];//定义一个数组
-    $('input[name="checkbox1"]:checked').each(function(){//遍历每一个名字为nodes的复选框，其中选中的执行函数
-    	ids.push($(this).val());//将选中的值添加到数组chk_value中
-    });
-    var groups = ids.join(",");
-    alert("待删除的id为："+groups);
-}
+{##}
+{#function getVal(){#}
+{##}
+{#	var chk_value =[];//定义一个数组#}
+{#    $('input[name="checkbox1"]:checked').each(function(){//遍历每一个名字为nodes的复选框，其中选中的执行函数#}
+{#    	ids.push($(this).val());//将选中的值添加到数组chk_value中#}
+{#    });#}
+{#    var groups = ids.join(",");#}
+{#    alert("待删除的id为："+groups);#}
+{#}#}
 
 
 
 function deleteitem() {
 
+    $('input[name="checkbox1"]:checked').each(function(){//遍历每一个名字为nodes的复选框，其中选中的执行函数
+    	ids.push($(this).val());//将选中的值添加到数组chk_value中
+    });
  if(ids.length != 0){
 	if(confirm("确定删除吗？")){
 		$.ajax({
@@ -1058,6 +1061,7 @@ function deleteitem() {
 		data:{"ids":ids},
 		success:function(result){
 			alert(result.msg.info);
+			window.location = '/starbox/';
 		}
 	});
 	}
