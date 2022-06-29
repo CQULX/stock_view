@@ -1,21 +1,15 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect, render,HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.decorators import login_required
-from stock_view.code.get_now_data import get_1a0001,get_399001,get_399006,get_numUpAndDown
+from django.views.decorators.csrf import csrf_exempt 
 from stock_view.models import StockExternal, UserInfo
 from stock_view.code.get_now_data import get_1a0001
 from stock_view.models import UserInfo, TradeInfo
 from django.contrib import messages
 from stock_view.models import StockInfo
 from stock_view.models import Favorite
-from stock_view.code.get_stock_info import update 
+from stock_view.code.get_stock_info import update
 from stock_view.code.get_now_data import get_1a0001,get_399001,get_399006,get_numUpAndDown
-# def update_now_stock(func):
-#     def wrapper(request,*args,**kwargs):
-#         update()
-#         return func(request, *args, **kwargs)
-#     return wrapper
+# Create your views here.
 
 def checkLogin(func):
     def warpper(request,*args,**kwargs):
@@ -25,8 +19,8 @@ def checkLogin(func):
             return redirect('/gotologin')
     return warpper
 
-# Create your views here.
 def index(request):
+
     shang_time,shang_value=get_1a0001()
     shang_time[0]='0930'
     shen_time,shen_value=get_399001()
@@ -143,6 +137,16 @@ def rankByMap(request):
     'yeartodate_up_down':stock.yeartodate_up_down,'address':address.get(stock.stock_id)} for stock in StockInfo.objects.all()]})
 
 
+def rankByTrade(request):
+    industry={str(i.stock_id).zfill(6):i.stock_industry for i in StockExternal.objects.all()}
+    return render(request,"rankByTrade.html",{'data':[{'no':stock.no,'id':stock.stock_id,'name':stock.stock_name,
+    'price':stock.now_price,'changepercent':stock.changepercent,'changeamount':stock.changeamount,
+    'turnover':stock.turnover,'vol':stock.vol,'swing':stock.swing,'high_price':stock.high_price,
+    'low_price':stock.low_price,'open_price':stock.open_price,'close_price_yesterday':stock.close_price_yesterday,
+    'quantity_relative_ratio':stock.quantity_relative_ratio,'turnover_rate':stock.turnover_rate,'pe':stock.pe,
+    'pb':stock.pb,'total_value':stock.total_value,'higher_speed':stock.higher_speed,
+    'five_min_up_down':stock.five_min_up_down,'sixty_day_up_down':stock.sixty_day_up_down,
+    'yeartodate_up_down':stock.yeartodate_up_down,'industry':industry.get(stock.stock_id)} for stock in StockInfo.objects.all()]})
 
 @csrf_exempt
 def starbox(request):
@@ -164,6 +168,11 @@ def deleteProductByIdList(request):
     except Exception as res:
         context = {"info": str(res)}
     return JsonResponse({"msg": context})
+
+
+def get_trade(request,param1):
+    star_list=Favorite.objects.all()
+    return redirect(index)
 
 @checkLogin
 def Usersettings(request):
@@ -208,12 +217,12 @@ def noUseful(request):
 
 @checkLogin
 def manager(request):
-    # print(request.session.get('login_user')['isManager'])
-    # try:
-    #     if request.session.get('login_user')['isManager'] == b'\x00':
-    #         return render(request,"notmanager.html")
-    # except:
-    #     return render(request,"notmanager.html")
+    print(request.session.get('login_user')['isManager'])
+    try:
+        if request.session.get('login_user')['isManager'] == b'\x00':
+            return render(request,"notmanager.html")
+    except:
+        return render(request,"notmanager.html")
     user=[{"id":i.id,"name":i.name,"password":i.password,"isManager":"yes"if i.isManager == b'\x01' else "no"}for i in UserInfo.objects.all()]
     return render(request,"manager.html",{"user":user})
 
