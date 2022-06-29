@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect, render,HttpResponse
 from django.views.decorators.csrf import csrf_exempt 
+from django.contrib.auth.decorators import login_required
 from stock_view.code.get_now_data import get_1a0001,get_399001,get_399006,get_numUpAndDown
 from stock_view.models import StockExternal, UserInfo
 from stock_view.code.get_now_data import get_1a0001
@@ -14,6 +15,14 @@ from stock_view.code.get_stock_info import update
 #         update()
 #         func()
 #     return wrapper
+
+def checkLogin(func):
+    def warpper(request,*args,**kwargs):
+        if request.session.get('login_user', False):
+            return func(request, *args, **kwargs)
+        else:
+            return redirect('/login')
+    return warpper
 
 # Create your views here.
 def index(request):
@@ -53,6 +62,10 @@ def login(request):
     pwd=request.POST.get('password')
     name_obj=UserInfo.objects.filter(name=Nam,password=pwd)
     if(len(name_obj)!=0):
+        request.session['login_user']={
+                                'user_name':Nam,
+                                'user_id' :UserInfo.objects.get(name=Nam).id
+                            }
         return redirect(index)
     else:
         return render(request,"login.html",{"error_msg":"用户名或密码错误"})
@@ -151,3 +164,19 @@ def deleteProductByIdList(request):
         context = {"info": str(res)}
     return JsonResponse({"msg": context})
 
+@checkLogin
+def Usersettings(request):
+    return render(request,'userSettings.html')
+
+@csrf_exempt
+def UserInfoSet(request):
+    mod = UserInfo.objects
+    Myid = request.POST.get('id')
+    newname = request.POST.get('name')
+    print(Myid)
+    try:
+        mod.filter(id=Myid).update(name=newname)
+        context = {"info":"修改成功"}
+    except:
+        context = {"info":"修改失败"}
+    return JsonResponse({"msg": context})
