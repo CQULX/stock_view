@@ -904,14 +904,8 @@
                 <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="far fa-square"></i>
                 </button>
                 <div class="btn-group">
-                  <button type="button" onclick="deleteitem()" class="btn btn-default btn-sm checkbox-del" id="del">
+                  <button type="button" class="btn btn-default btn-sm checkbox-del" id="del">
                     <i class="far fa-trash-alt"></i>
-                  </button>
-                  <button type="button" class="btn btn-default btn-sm">
-                    <i class="fas fa-reply"></i>
-                  </button>
-                  <button type="button" class="btn btn-default btn-sm">
-                    <i class="fas fa-share"></i>
                   </button>
                 </div>
                 <!-- /.btn-group -->
@@ -995,7 +989,7 @@
 <!-- AdminLTE for demo purposes -->
 <script src="../static/dist/js/demo.js"></script>
 <!-- Page specific script -->
-<script>
+<!-- <script>
   $(function () {
     //Enable check and uncheck all functionality
     $('.checkbox-toggle').click(function () {
@@ -1053,8 +1047,8 @@ function deleteitem() {
  if(ids.length != 0){
 	if(confirm("确定删除吗？")){
 		$.ajax({
-		url:"/deleteProductByIdList/",
-		type:"get",
+		url:"/starbox/",
+		type:"post",
 		data:{"ids":ids},
 		success:function(result){
 			alert(result.msg.info);
@@ -1067,6 +1061,6 @@ function deleteitem() {
 
     }
 
-</script>
+</script> -->
 </body>
 </html>
