@@ -22,7 +22,7 @@ def checkLogin(func):
         if request.session.get('login_user', False):
             return func(request, *args, **kwargs)
         else:
-            return redirect('/login')
+            return redirect('/gotologin')
     return warpper
 
 # Create your views here.
@@ -180,3 +180,27 @@ def UserInfoSet(request):
     except:
         context = {"info":"修改失败"}
     return JsonResponse({"msg": context})
+
+@csrf_exempt
+def changeMyPassword(request):
+    mod = UserInfo.objects
+    Myid = request.POST.get('id')
+    print(Myid)
+    oldpassword = request.POST.get('oldpassword')
+    newpassword = request.POST.get('newpassword')
+    name_obj=UserInfo.objects.filter(id=Myid,password=oldpassword)
+    if len(name_obj)==0:
+        return JsonResponse({"msg":{"info":"密码错误"}})
+    try:
+        mod.filter(id=Myid).update(password=newpassword)
+        context = {"info":"修改成功"}
+    except:
+        context = {"info":"修改失败"}
+    return JsonResponse({"msg": context})
+
+@checkLogin
+def setpassword(request):
+    return render(request,'setpassword.html')
+
+def noUseful(request):
+    return render(request,"gotologin.html")

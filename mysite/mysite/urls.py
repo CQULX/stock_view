@@ -32,5 +32,8 @@ urlpatterns = [
     path('starbox/',views.starbox),
     path('userSettings/',views.Usersettings),
     path('UserSet/',views.UserInfoSet),
-    path('deleteProductByIdList/',views.deleteProductByIdList)
+    path('deleteProductByIdList/',views.deleteProductByIdList),
+    path('changepassword/',views.changeMyPassword),
+    path('setpassword/',views.setpassword),
+    path('gotologin/',views.noUseful),
 ]
