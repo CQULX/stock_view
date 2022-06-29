@@ -125,24 +125,8 @@ def rankByMap(request):
 
 
 
-
+@csrf_exempt
 def starbox(request):
     star_list=Favorite.objects.all()
-    return render(request, "starbox.html", {"star_list": star_list})
+    return render(request,"starbox.html",{"star_list":star_list})
 
-# 根据id列表批量删除数据
-def deleteProductByIdList(request):
-    mod = Favorite.objects
-    # 获取前端传来的id数组
-    idlist = request.GET.getlist('ids[]')
-    try:
-        # 遍历id数组
-        for id in idlist:
-            # 删除对应id的记录
-            mod.get(id=id).delete()
-        context = {"info": "删除成功"}
-    except Exception as res:
-        context = {"info": str(res)}
-    return JsonResponse({"msg": context})
-
->>>>>>> c2e34a1ede105b977cc58f9f6ec8e55a8a72962e
