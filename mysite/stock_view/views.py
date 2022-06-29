@@ -12,9 +12,9 @@ from stock_view.models import Favorite
 from stock_view.code.get_stock_info import update 
 from stock_view.code.get_now_data import get_1a0001,get_399001,get_399006,get_numUpAndDown
 # def update_now_stock(func):
-#     def wrapper():
+#     def wrapper(request,*args,**kwargs):
 #         update()
-#         func()
+#         return func(request, *args, **kwargs)
 #     return wrapper
 
 def checkLogin(func):
@@ -24,6 +24,7 @@ def checkLogin(func):
         else:
             return redirect('/login')
     return warpper
+
 # Create your views here.
 def index(request):
     shang_time,shang_value=get_1a0001()
