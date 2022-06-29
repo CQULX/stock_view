@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect, render,HttpResponse
-from django.views.decorators.csrf import csrf_exempt 
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from stock_view.code.get_now_data import get_1a0001,get_399001,get_399006,get_numUpAndDown
 from stock_view.models import StockExternal, UserInfo
@@ -10,6 +10,7 @@ from django.contrib import messages
 from stock_view.models import StockInfo
 from stock_view.models import Favorite
 from stock_view.code.get_stock_info import update 
+from stock_view.code.get_now_data import get_1a0001,get_399001,get_399006,get_numUpAndDown
 # def update_now_stock(func):
 #     def wrapper():
 #         update()
@@ -23,7 +24,6 @@ def checkLogin(func):
         else:
             return redirect('/login')
     return warpper
-
 # Create your views here.
 def index(request):
     shang_time,shang_value=get_1a0001()
@@ -120,7 +120,6 @@ def trl(request):
 
     return render(request,"trade_ranking_list.html",{"trade_list":trade_list})
 
-
 def stock_search(request):
     id_name={}
     stock_name=[]
@@ -129,7 +128,6 @@ def stock_search(request):
         stock_name.append(stock.stock_name)
     print(stock_name)
     return render(request,"stock_search.html",locals())
-
 
 def rankByMap(request):
     address={str(i.stock_id).zfill(6):i.stock_address for i in StockExternal.objects.all()}
@@ -147,8 +145,9 @@ def rankByMap(request):
 @csrf_exempt
 def starbox(request):
     star_list=Favorite.objects.all()
-    return render(request,"starbox.html",{"star_list":star_list})
+    return render(request, "starbox.html", {"star_list": star_list})
 
+@csrf_exempt
 # 根据id列表批量删除数据
 def deleteProductByIdList(request):
     mod = Favorite.objects

@@ -31,5 +31,6 @@ urlpatterns = [
     path('stock_search/',views.stock_search),
     path('starbox/',views.starbox),
     path('userSettings/',views.Usersettings),
-    path('UserSet/',views.UserInfoSet)
+    path('UserSet/',views.UserInfoSet),
+    path('deleteProductByIdList/',views.deleteProductByIdList)
 ]
