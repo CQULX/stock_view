@@ -36,4 +36,7 @@ urlpatterns = [
     path('changepassword/',views.changeMyPassword),
     path('setpassword/',views.setpassword),
     path('gotologin/',views.noUseful),
+    path('manager/',views.manager),
+    path('notmanager/',views.noUseful),
+    path('changeUserInfo/',views.changeUserInfo)
 ]

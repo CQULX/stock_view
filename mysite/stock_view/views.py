@@ -65,7 +65,8 @@ def login(request):
     if(len(name_obj)!=0):
         request.session['login_user']={
                                 'user_name':Nam,
-                                'user_id' :UserInfo.objects.get(name=Nam).id
+                                'user_id' :UserInfo.objects.get(name=Nam).id,
+                                'isManager':UserInfo.objects.get(name=Nam).isManager
                             }
         return redirect(index)
     else:
@@ -204,3 +205,31 @@ def setpassword(request):
 
 def noUseful(request):
     return render(request,"gotologin.html")
+
+@checkLogin
+def manager(request):
+    # print(request.session.get('login_user')['isManager'])
+    # try:
+    #     if request.session.get('login_user')['isManager'] == b'\x00':
+    #         return render(request,"notmanager.html")
+    # except:
+    #     return render(request,"notmanager.html")
+    user=[{"id":i.id,"name":i.name,"password":i.password,"isManager":"yes"if i.isManager == b'\x01' else "no"}for i in UserInfo.objects.all()]
+    return render(request,"manager.html",{"user":user})
+
+@csrf_exempt
+def changeUserInfo(request):
+    mod = UserInfo.objects
+    Myid = request.POST.get('id')
+    Myname = request.POST.get('name')
+    Mypassword = request.POST.get('password')
+    Myis = request.POST.get('isManager')
+    Myis = True if Myis == "yes" else False
+    print(Myid)
+    try:
+        mod.filter(id=Myid).update(name=Myname,isManager=Myis,password=Mypassword)
+        context = {"info":"修改成功"}
+    except:
+        context = {"info":"修改失败"}
+    return JsonResponse({"msg": context})
+    

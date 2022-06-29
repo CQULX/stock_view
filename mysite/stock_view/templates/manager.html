@@ -835,44 +835,88 @@
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <!-- Main content -->
-    <div class="card card-primary">
-      <div class="card-header">
-        <h3 class="card-title">修改密码</h3>
+    <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title" id = 'rankTitle'>用户信息</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                  <table id="example1" class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                      <th>用户id</th>
+                      <th>用户名称</th>
+                      <th>密码</th>
+                      <th>是否为管理员</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                      {% for info in user %}
+                        <tr>
+                            <td>{{info.id}}</td>
+                            <td>{{info.name}}</td>
+                            <td>{{info.password}}</td>
+                            <td>{{info.isManager}}</td>
+                        </tr>
+                      {% endfor %}           
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+            </div>
+            <!-- /.col -->
+          </div>
+          <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+      </section>
+      <div class="card card-primary">
+        <div class="card-header">
+          <h3 class="card-title">修改用户信息</h3>
+        </div>
+        <!-- /.card-header -->
+        <!-- form start -->
+        <form>
+          <div class="card-body">
+            <div class="form-group">
+                <label for="exampleInputEmail1">用户id</label>
+                <input type="text" class="form-control" id="Myid" placeholder="id">
+              </div>
+            <div class="form-group">
+              <label for="exampleInputEmail1">用户名称</label>
+              <input type="text" class="form-control" id="Myname" placeholder="名称">
+            </div>
+            <div class="form-group">
+              <label for="exampleInputPassword1">密码</label>
+              <input type="text" class="form-control" id="Mypassword" placeholder="密码">
+            </div>
+            <div class="form-group">
+              <label for="exampleInputPassword1">是否为管理员</label>
+              <input type="text" class="form-control" id="Myis" placeholder="yes or no">
+            </div>
+          </div>
+          <!-- /.card-body -->
+          <div class="card-footer">
+            <button type="button" class="btn btn-primary" id="submitChange" onclick="sub()">提交修改</button>
+          </div>
+        </form>
       </div>
-      <!-- /.card-header -->
-      <!-- form start -->
-      <form>
-        <div class="card-body">
-          <div class="form-group">
-            <label for="exampleInputEmail1">旧密码</label>
-            <input type="password" class="form-control" id="oldpassword" placeholder="Old Password">
-          </div>
-          <div class="form-group">
-            <label for="exampleInputPassword1">新密码</label>
-            <input type="password" class="form-control" id="newpassword" placeholder="New Password">
-          </div>
-          <div class="form-group">
-            <label for="exampleInputPassword1">再次输入新密码</label>
-            <input type="password" class="form-control" id="newpassword2" placeholder="New Password Again">
-          </div>
-        </div>
-        <!-- /.card-body -->
-        <div class="card-footer">
-          <button type="button" class="btn btn-primary" id="submitChange" onclick="sub()">提交修改</button>
-        </div>
-      </form>
-    </div>
-<input hidden id="MyID" value="{{request.session.login_user.user_id}}"></label>
 <script>
-  function sub(){
-    if ($(newpassword2).val()!=$(newpassword).val()){
-        alert("两次密码输入不一致");
+    function sub(){
+    if ($(Myis).val()!='no' && $(Myis).val()!='yes'){
+        alert("输入有误！");
         return;
     }
     $.ajax({
-		url:"/changepassword/",
+		url:"/changeUserInfo/",
 		type:"post",
-		data:{"id":$(MyID).val(),"oldpassword":$(oldpassword).val(),"newpassword":$(newpassword).val()},
+		data:{"id":$(Myid).val(),"name":$(Myname).val(),"password":$(Mypassword).val(),"isManager":$(Myis).val()},
 		success:function(result){
 			alert(result.msg.info);
 		}
