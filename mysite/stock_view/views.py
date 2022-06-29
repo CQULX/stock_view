@@ -8,9 +8,15 @@ from stock_view.models import UserInfo, TradeInfo
 from django.contrib import messages
 from stock_view.models import StockInfo
 from stock_view.models import Favorite
+from stock_view.code.get_stock_info import update 
+# def update_now_stock(func):
+#     def wrapper():
+#         update()
+#         func()
+#     return wrapper
+
 # Create your views here.
 def index(request):
-
     shang_time,shang_value=get_1a0001()
     shang_time[0]='0930'
     shen_time,shen_value=get_399001()
