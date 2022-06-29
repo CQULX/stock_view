@@ -7,8 +7,18 @@ from stock_view.models import UserInfo, TradeInfo
 from django.contrib import messages
 from stock_view.models import StockInfo
 from stock_view.models import Favorite
+from stock_view.code.get_stock_info import update
 from stock_view.code.get_now_data import get_1a0001,get_399001,get_399006,get_numUpAndDown
 # Create your views here.
+
+def checkLogin(func):
+    def warpper(request,*args,**kwargs):
+        if request.session.get('login_user', False):
+            return func(request, *args, **kwargs)
+        else:
+            return redirect('/gotologin')
+    return warpper
+
 def index(request):
 
     shang_time,shang_value=get_1a0001()
@@ -47,6 +57,10 @@ def login(request):
     pwd=request.POST.get('password')
     name_obj=UserInfo.objects.filter(name=Nam,password=pwd)
     if(len(name_obj)!=0):
+        request.session['login_user'] = {
+            'user_name': Nam,
+            'user_id': UserInfo.objects.get(name=Nam).id
+        }
         return redirect(index)
     else:
         return render(request,"login.html",{"error_msg":"用户名或密码错误"})
@@ -154,9 +168,48 @@ def deleteProductByIdList(request):
         context = {"info": str(res)}
     return JsonResponse({"msg": context})
 
+
 def get_trade(request,param1):
     star_list=Favorite.objects.all()
     return redirect(index)
 
+@checkLogin
+def Usersettings(request):
+    return render(request,'userSettings.html')
 
+@csrf_exempt
+def UserInfoSet(request):
+    mod = UserInfo.objects
+    Myid = request.POST.get('id')
+    newname = request.POST.get('name')
+    print(Myid)
+    try:
+        mod.filter(id=Myid).update(name=newname)
+        context = {"info":"修改成功"}
+    except:
+        context = {"info":"修改失败"}
+    return JsonResponse({"msg": context})
 
+@csrf_exempt
+def changeMyPassword(request):
+    mod = UserInfo.objects
+    Myid = request.POST.get('id')
+    print(Myid)
+    oldpassword = request.POST.get('oldpassword')
+    newpassword = request.POST.get('newpassword')
+    name_obj=UserInfo.objects.filter(id=Myid,password=oldpassword)
+    if len(name_obj)==0:
+        return JsonResponse({"msg":{"info":"密码错误"}})
+    try:
+        mod.filter(id=Myid).update(password=newpassword)
+        context = {"info":"修改成功"}
+    except:
+        context = {"info":"修改失败"}
+    return JsonResponse({"msg": context})
+
+@checkLogin
+def setpassword(request):
+    return render(request,'setpassword.html')
+
+def noUseful(request):
+    return render(request,"gotologin.html")
