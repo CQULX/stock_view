@@ -123,11 +123,12 @@ def rankByMap(request):
 
 
 
-
+@csrf_exempt
 def starbox(request):
     star_list=Favorite.objects.all()
     return render(request, "starbox.html", {"star_list": star_list})
 
+@csrf_exempt
 # 根据id列表批量删除数据
 def deleteProductByIdList(request):
     mod = Favorite.objects
