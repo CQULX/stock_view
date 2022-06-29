@@ -14,11 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 from stock_view import views
 
 urlpatterns = [
     path('rankByMap/',views.rankByMap),
+    path('rankByTrade/',views.rankByTrade),
     path('Allrank.html/',views.Allrank),
     path('',views.login),
     path('index/', views.index),
@@ -30,5 +31,6 @@ urlpatterns = [
     path('trade_ranking_list/',views.trl),
     path('stock_search/',views.stock_search),
     path('starbox/',views.starbox),
-    path('deleteProductByIdList/',views.deleteProductByIdList)
+    path('deleteProductByIdList/',views.deleteProductByIdList),
+    re_path(r'^trade/(.+)/$', views.get_trade)
 ]
