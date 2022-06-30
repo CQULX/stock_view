@@ -1,4 +1,8 @@
+
+from logging import Manager
+
 from turtle import st
+
 from django.http import JsonResponse
 from django.shortcuts import redirect, render,HttpResponse
 from django.views.decorators.csrf import csrf_exempt 
@@ -6,11 +10,16 @@ from stock_view.models import StockExternal, UserInfo
 from stock_view.code.get_now_data import get_1a0001
 from stock_view.models import UserInfo, TradeInfo,StockHisinfo
 from django.contrib import messages
+
+from stock_view.models import StockInfo,CompanyInfo1
+from stock_view.models import Favorite,ManagerInfo
+
 from stock_view.models import StockInfo
 from stock_view.models import Favorite
 import math
 from stock_view.code.get_stock_info import update
 from stock_view.code.get_now_data import get_1a0001,get_399001,get_399006,get_numUpAndDown
+
 # Create your views here.
 
 def checkLogin(func):
@@ -180,6 +189,65 @@ def deleteProductByIdList(request):
         context = {"info": str(res)}
     return JsonResponse({"msg": context})
 
+@csrf_exempt
+def company_search(request):
+    if(request.method=="GET"):
+        company_name=[]
+        for company in CompanyInfo1.objects.all():
+            company_name.append(company.company_name)
+        # print(company_name)
+        return render(request,"company_search.html",{'company_name':company_name})
+    name=request.POST.get('myInput')
+    # print(name)
+    return redirect("./"+name)
+
+@csrf_exempt
+def company_search_detail(request,id):
+    # print(id)
+    if(request.method=="POST"):
+        name=request.POST.get('myInput')
+        return redirect("../"+name)
+    company_name=[]
+    for company1 in CompanyInfo1.objects.all():
+        company_name.append(company1.company_name)
+    company=CompanyInfo1.objects.get(company_name=id)
+    # print(company.company_name)
+    company_info={}
+    company_info['company_name']=company.company_name
+    company_info['territory']=company.territory
+    company_info['industry']=company.industry
+    company_info['url']=company.url
+    company_info['business']=company.business
+    company_info['product']=company.product
+    company_info['shareholder']=company.shareholder
+    company_info['chairman']=company.chairman
+    company_info['board_secretariat']=company.board_secretariat
+    company_info['correp']=company.correp
+    company_info['generalmanager']=company.generalmanager
+    company_info['reg_fund']=company.reg_fund
+    company_info['num_employees']=company.num_employees
+    company_info['phone']=company.phone
+    company_info['fax']=company.fax
+    company_info['zipcode']=company.zipcode
+    company_info['address']=company.address
+    company_info['profile']=company.profile
+    manager=['chairman','board_secretariat','correp','generalmanager']
+    manager_info=[{},{},{},{}]
+    stock=StockExternal.objects.get(company_name=id)
+    stock_id=stock.stock_id
+    stock_id=str(stock_id).zfill(6)
+    print(type(stock_id))
+    for i in range(0, len(manager)):
+        m1=ManagerInfo.objects.get(manager_name=company_info[manager[i]])
+        manager_info[i]['manager_name']=m1.manager_name
+        manager_info[i]['manager_gender']=m1.manager_gender
+        manager_info[i]['manager_age']=m1.manager_age
+        manager_info[i]['manager_edu']=m1.manager_edu
+        manager_info[i]['manager_intro']=m1.manager_intro
+    # print(manager_info[0])
+    # print(company_info)
+    return render(request,"company_search_detail.html",{'data':company_info,'manager':manager_info,'stock':stock_id,'company_name':company_name})
+
 def stock_search_detail(request,id):
     if(request.method=="GET"):
         SID=int(id)
@@ -294,4 +362,4 @@ def changeUserInfo(request):
     except:
         context = {"info":"修改失败"}
     return JsonResponse({"msg": context})
-    
+
