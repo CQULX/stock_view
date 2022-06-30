@@ -997,7 +997,7 @@
         <!-- Main row -->
         <div class="row">
           <!-- Left col -->
-          <section class="col-lg-7 connectedSortable">
+          <section class="col-lg-12 connectedSortable">
             <!-- Custom tabs (Charts with tabs)-->
             <div class="card">
               <div class="card-header">
@@ -1130,8 +1130,8 @@
                           }
                         ]
                       };
-
                       option && myChart.setOption(option);
+                      chartDom.className=""
                   </script>
                   </div>
                 </div>
@@ -1139,7 +1139,13 @@
             </div>
             <!-- /.card -->
 
-              <!-- /.card -->
+
+          </section>
+          <!-- /.Left col -->
+          <!-- right col (We are only adding the ID to make the widgets sortable)-->
+            <!-- Map card -->
+            <!-- /.card -->
+          <section  class='col-4 connectedSortable'>
             <div class="card bg-gradient-info">
               <div class="card-header border-0">
                 <h3 class="card-title">
@@ -1156,7 +1162,7 @@
                   </button>
                 </div>
               </div>
-              <div class="card-body" id="shang_zheng" style="width: 500px;height:400px;"></div>
+              <div class="card-body" id="shang_zheng" style="width: 400px;height:400px;"></div>
               <script type="text/javascript">
                 var myChart = echarts.init(document.getElementById("shang_zheng"));
                 var x_axis_data=[];   
@@ -1165,10 +1171,10 @@
                 {% endfor %}
                 var option = {
                   tooltip: {
-                          					trigger: 'axis', //坐标轴触发，主要在柱状图，折线图等会使用类目轴的图表中使用
-                          					axisPointer: {// 坐标轴指示器，坐标轴触发有效
-                          						type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
-                          					}
+                                    trigger: 'axis', //坐标轴触发，主要在柱状图，折线图等会使用类目轴的图表中使用
+                                    axisPointer: {// 坐标轴指示器，坐标轴触发有效
+                                      type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+                                    }
                           },
                   xAxis: {
                     type: "category",
@@ -1222,7 +1228,9 @@
                   myChart.setOption(option);
               </script>
             </div>
+          </section>
             <!-- /.card -->
+          <section  class='col-4 connectedSortable'>
             <div class="card bg-gradient-info">
               <div class="card-header border-0">
                 <h3 class="card-title">
@@ -1239,7 +1247,7 @@
                   </button>
                 </div>
               </div>
-              <div class="card-body" id="chuang_ban" style="width: 500px;height:400px;"></div>
+              <div class="card-body" id="chuang_ban" style="width: 400px;height:400px;"></div>
               <script type="text/javascript">
                 var myChart = echarts.init(document.getElementById("chuang_ban"));
                 var x_axis_data=[];   
@@ -1248,10 +1256,10 @@
                 {% endfor %}
                 var option = {
                   tooltip: {
-                          					trigger: 'axis', //坐标轴触发，主要在柱状图，折线图等会使用类目轴的图表中使用
-                          					axisPointer: {// 坐标轴指示器，坐标轴触发有效
-                          						type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
-                          					}
+                                    trigger: 'axis', //坐标轴触发，主要在柱状图，折线图等会使用类目轴的图表中使用
+                                    axisPointer: {// 坐标轴指示器，坐标轴触发有效
+                                      type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+                                    }
                           },
                   xAxis: {
                     type: "category",
@@ -1306,55 +1314,8 @@
               </script>
             </div>
           </section>
-          <!-- /.Left col -->
-          <!-- right col (We are only adding the ID to make the widgets sortable)-->
-          <section class="col-lg-5 connectedSortable">
-
-            <!-- Map card -->
-            <div class="card bg-gradient-primary">
-              <div class="card-header border-0">
-                <h3 class="card-title">
-                  <i class="fas fa-map-marker-alt mr-1"></i>
-                  Visitors
-                </h3>
-                <!-- card tools -->
-                <div class="card-tools">
-                  <button type="button" class="btn btn-primary btn-sm daterange" title="Date range">
-                    <i class="far fa-calendar-alt"></i>
-                  </button>
-                  <button type="button" class="btn btn-primary btn-sm" data-card-widget="collapse" title="Collapse">
-                    <i class="fas fa-minus"></i>
-                  </button>
-                </div>
-                <!-- /.card-tools -->
-              </div>
-              <div class="card-body">
-                <div id="world-map" style="height: 250px; width: 100%;"></div>
-              </div>
-              <!-- /.card-body-->
-              <div class="card-footer bg-transparent">
-                <div class="row">
-                  <div class="col-4 text-center">
-                    <div id="sparkline-1"></div>
-                    <div class="text-white">Visitors</div>
-                  </div>
-                  <!-- ./col -->
-                  <div class="col-4 text-center">
-                    <div id="sparkline-2"></div>
-                    <div class="text-white">Online</div>
-                  </div>
-                  <!-- ./col -->
-                  <div class="col-4 text-center">
-                    <div id="sparkline-3"></div>
-                    <div class="text-white">Sales</div>
-                  </div>
-                  <!-- ./col -->
-                </div>
-                <!-- /.row -->
-              </div>
-            </div>
-            
              <!-- /.card -->
+          <section  class='col-4 connectedSortable'>
              <div class="card bg-gradient-info">
               <div class="card-header border-0">
                 <h3 class="card-title">
@@ -1371,7 +1332,7 @@
                   </button>
                 </div>
               </div>
-              <div class="card-body" id="shen_zheng" style="width: 500px;height:400px;"></div>
+              <div class="card-body" id="shen_zheng" style="width: 400px;height:400px;"></div>
               <script type="text/javascript">
                 var myChart = echarts.init(document.getElementById("shen_zheng"));
                 var x_axis_data=[];   
@@ -1437,8 +1398,9 @@
                   myChart.setOption(option);
               </script>
             </div>
-            <!-- /.card -->
           </section>
+            <!-- /.card -->
+
           <!-- right col -->
         </div>
         <!-- /.row (main row) -->
