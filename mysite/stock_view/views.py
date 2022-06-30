@@ -1,4 +1,8 @@
+
+from logging import Manager
+
 from turtle import st
+
 from django.http import JsonResponse
 from django.shortcuts import redirect, render,HttpResponse
 from django.views.decorators.csrf import csrf_exempt 
@@ -6,11 +10,16 @@ from stock_view.models import StockExternal, UserInfo
 from stock_view.code.get_now_data import get_1a0001
 from stock_view.models import UserInfo, TradeInfo,StockHisinfo,StockExternal
 from django.contrib import messages
+
+from stock_view.models import StockInfo,CompanyInfo1
+from stock_view.models import Favorite,ManagerInfo
+
 from stock_view.models import StockInfo
 from stock_view.models import Favorite
 import math
 from stock_view.code.get_stock_info import update
 from stock_view.code.get_now_data import get_1a0001,get_399001,get_399006,get_numUpAndDown
+
 # Create your views here.
 
 def checkLogin(func):
@@ -21,8 +30,12 @@ def checkLogin(func):
             return redirect('/gotologin')
     return warpper
 
+@checkLogin
 def index(request):
-
+    stock_count=StockExternal.objects.all().count()
+    company_count=CompanyInfo1.objects.all().count()
+    user_count=UserInfo.objects.all().count()
+    trade_count=TradeInfo.objects.all().count()
     shang_time,shang_value=get_1a0001()
     shang_time[0]='0930'
     shen_time,shen_value=get_399001()
@@ -64,6 +77,8 @@ def login(request):
                                 'user_id' :UserInfo.objects.get(name=Nam).id,
                                 'isManager':UserInfo.objects.get(name=Nam).isManager
                             }
+        request.session['login_user']['YesOrNoManager']="yes" if request.session['login_user']['isManager'] == b'\x01' else "no"
+
         return redirect(index)
     else:
         return render(request,"login.html",{"error_msg":"用户名或密码错误"})
@@ -88,7 +103,7 @@ def register(request):
 # def Allrank(request):
 #     objs=StockInfo.objects.all()
 #     return render(request,"general.html",locals())
-
+@checkLogin
 def Allrank(request):
     return render(request,"Allrank.html",{'data':[{'no':stock.no,'id':stock.stock_id,'name':stock.stock_name,
     'price':stock.now_price,'changepercent':stock.changepercent,'changeamount':stock.changeamount,
@@ -99,7 +114,7 @@ def Allrank(request):
     'five_min_up_down':stock.five_min_up_down,'sixty_day_up_down':stock.sixty_day_up_down,
     'yeartodate_up_down':stock.yeartodate_up_down} for stock in StockInfo.objects.all()]})
 
-
+@checkLogin
 def test(request):
     shang_time,shang_value=get_1a0001()
     shang_time[0]='0930'
@@ -112,12 +127,13 @@ def test(request):
     shang_value =list(map(float,shang_value))
     return render(request,"test.html",locals())
 
-
+@checkLogin
 def trl(request):
     trade_list = TradeInfo.objects.all()
 
     return render(request,"trade_ranking_list.html",{"trade_list":trade_list})
 
+@checkLogin
 @csrf_exempt
 def stock_search(request):
     if(request.method=="GET"):
@@ -130,7 +146,7 @@ def stock_search(request):
 
     
     
-
+@checkLogin
 def rankByMap(request):
     address={str(i.stock_id).zfill(6):i.stock_address for i in StockExternal.objects.all()}
     return render(request,"rankByMap.html",{'data':[{'no':stock.no,'id':stock.stock_id,'name':stock.stock_name,
@@ -142,7 +158,7 @@ def rankByMap(request):
     'five_min_up_down':stock.five_min_up_down,'sixty_day_up_down':stock.sixty_day_up_down,
     'yeartodate_up_down':stock.yeartodate_up_down,'address':address.get(stock.stock_id)} for stock in StockInfo.objects.all()]})
 
-
+@checkLogin
 def rankByTrade(request):
     industry={str(i.stock_id).zfill(6):i.stock_industry for i in StockExternal.objects.all()}
     return render(request,"rankByTrade.html",{'data':[{'no':stock.no,'id':stock.stock_id,'name':stock.stock_name,
@@ -154,11 +170,13 @@ def rankByTrade(request):
     'five_min_up_down':stock.five_min_up_down,'sixty_day_up_down':stock.sixty_day_up_down,
     'yeartodate_up_down':stock.yeartodate_up_down,'industry':industry.get(stock.stock_id)} for stock in StockInfo.objects.all()]})
 
+@checkLogin
 @csrf_exempt
 def starbox(request):
     star_list=Favorite.objects.all()
     return render(request, "starbox.html", {"star_list": star_list})
 
+@checkLogin
 @csrf_exempt
 # 根据id列表批量删除数据
 def deleteProductByIdList(request):
@@ -174,6 +192,67 @@ def deleteProductByIdList(request):
     except Exception as res:
         context = {"info": str(res)}
     return JsonResponse({"msg": context})
+
+@checkLogin
+@csrf_exempt
+def company_search(request):
+    if(request.method=="GET"):
+        company_name=[]
+        for company in CompanyInfo1.objects.all():
+            company_name.append(company.company_name)
+        # print(company_name)
+        return render(request,"company_search.html",{'company_name':company_name})
+    name=request.POST.get('myInput')
+    # print(name)
+    return redirect("./"+name)
+
+@checkLogin
+@csrf_exempt
+def company_search_detail(request,id):
+    # print(id)
+    if(request.method=="POST"):
+        name=request.POST.get('myInput')
+        return redirect("../"+name)
+    company_name=[]
+    for company1 in CompanyInfo1.objects.all():
+        company_name.append(company1.company_name)
+    company=CompanyInfo1.objects.get(company_name=id)
+    # print(company.company_name)
+    company_info={}
+    company_info['company_name']=company.company_name
+    company_info['territory']=company.territory
+    company_info['industry']=company.industry
+    company_info['url']=company.url
+    company_info['business']=company.business
+    company_info['product']=company.product
+    company_info['shareholder']=company.shareholder
+    company_info['chairman']=company.chairman
+    company_info['board_secretariat']=company.board_secretariat
+    company_info['correp']=company.correp
+    company_info['generalmanager']=company.generalmanager
+    company_info['reg_fund']=company.reg_fund
+    company_info['num_employees']=company.num_employees
+    company_info['phone']=company.phone
+    company_info['fax']=company.fax
+    company_info['zipcode']=company.zipcode
+    company_info['address']=company.address
+    company_info['profile']=company.profile
+    manager=['chairman','board_secretariat','correp','generalmanager']
+    manager_info=[{},{},{},{}]
+    stock=StockExternal.objects.get(company_name=id)
+    stock_id=stock.stock_id
+    stock_id=str(stock_id).zfill(6)
+    print(type(stock_id))
+    for i in range(0, len(manager)):
+        m1=ManagerInfo.objects.get(manager_name=company_info[manager[i]])
+        manager_info[i]['manager_name']=m1.manager_name
+        manager_info[i]['manager_gender']=m1.manager_gender
+        manager_info[i]['manager_age']=m1.manager_age
+        manager_info[i]['manager_edu']=m1.manager_edu
+        manager_info[i]['manager_intro']=m1.manager_intro
+    # print(manager_info[0])
+    # print(company_info)
+    return render(request,"company_search_detail.html",{'data':company_info,'manager':manager_info,'stock':stock_id,'company_name':company_name})
 
 def stock_search_detail(request,id):
     if(request.method=="GET"):
@@ -230,6 +309,7 @@ def get_trade(request,param1):
 def Usersettings(request):
     return render(request,'userSettings.html')
 
+@checkLogin
 @csrf_exempt
 def UserInfoSet(request):
     mod = UserInfo.objects
@@ -243,6 +323,7 @@ def UserInfoSet(request):
         context = {"info":"修改失败"}
     return JsonResponse({"msg": context})
 
+@checkLogin
 @csrf_exempt
 def changeMyPassword(request):
     mod = UserInfo.objects
@@ -264,8 +345,10 @@ def changeMyPassword(request):
 def setpassword(request):
     return render(request,'setpassword.html')
 
+
 def noUseful(request):
     return render(request,"gotologin.html")
+
 
 @checkLogin
 def manager(request):
@@ -278,6 +361,7 @@ def manager(request):
     user=[{"id":i.id,"name":i.name,"password":i.password,"isManager":"yes"if i.isManager == b'\x01' else "no"}for i in UserInfo.objects.all()]
     return render(request,"manager.html",{"user":user})
 
+@checkLogin
 @csrf_exempt
 def changeUserInfo(request):
     mod = UserInfo.objects
@@ -293,4 +377,4 @@ def changeUserInfo(request):
     except:
         context = {"info":"修改失败"}
     return JsonResponse({"msg": context})
-    
+
