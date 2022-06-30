@@ -1,8 +1,8 @@
-<<<<<<< HEAD
+
 from logging import Manager
-=======
+
 from turtle import st
->>>>>>> 7ad673aa93b3d594e4390b15a5fabe79e56574e9
+
 from django.http import JsonResponse
 from django.shortcuts import redirect, render,HttpResponse
 from django.views.decorators.csrf import csrf_exempt 
@@ -10,16 +10,16 @@ from stock_view.models import StockExternal, UserInfo
 from stock_view.code.get_now_data import get_1a0001
 from stock_view.models import UserInfo, TradeInfo,StockHisinfo
 from django.contrib import messages
-<<<<<<< HEAD
+
 from stock_view.models import StockInfo,CompanyInfo1
 from stock_view.models import Favorite,ManagerInfo
-=======
+
 from stock_view.models import StockInfo
 from stock_view.models import Favorite
 import math
 from stock_view.code.get_stock_info import update
 from stock_view.code.get_now_data import get_1a0001,get_399001,get_399006,get_numUpAndDown
->>>>>>> 7ad673aa93b3d594e4390b15a5fabe79e56574e9
+
 # Create your views here.
 
 def checkLogin(func):
@@ -199,6 +199,12 @@ def company_search(request):
 @csrf_exempt
 def company_search_detail(request,id):
     # print(id)
+    if(request.method=="POST"):
+        name=request.POST.get('myInput')
+        return redirect("../"+name)
+    company_name=[]
+    for company1 in CompanyInfo1.objects.all():
+        company_name.append(company1.company_name)
     company=CompanyInfo1.objects.get(company_name=id)
     # print(company.company_name)
     company_info={}
@@ -222,6 +228,10 @@ def company_search_detail(request,id):
     company_info['profile']=company.profile
     manager=['chairman','board_secretariat','correp','generalmanager']
     manager_info=[{},{},{},{}]
+    stock=StockExternal.objects.get(company_name=id)
+    stock_id=stock.stock_id
+    stock_id=str(stock_id).zfill(6)
+    print(type(stock_id))
     for i in range(0, len(manager)):
         m1=ManagerInfo.objects.get(manager_name=company_info[manager[i]])
         manager_info[i]['manager_name']=m1.manager_name
@@ -231,7 +241,7 @@ def company_search_detail(request,id):
         manager_info[i]['manager_intro']=m1.manager_intro
     # print(manager_info[0])
     # print(company_info)
-    return render(request,"company_search_detail.html",{'data':company_info,'manager':manager_info})
+    return render(request,"company_search_detail.html",{'data':company_info,'manager':manager_info,'stock':stock_id,'company_name':company_name})
 
 def stock_search_detail(request,id):
     if(request.method=="GET"):

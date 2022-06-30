@@ -15,10 +15,10 @@ class CompanyInfo1(models.Model):
     generalmanager = models.CharField(max_length=255, blank=True, null=True)#
     reg_fund = models.CharField(max_length=255, blank=True, null=True)#
     num_employees = models.CharField(max_length=255, blank=True, null=True)#
-    phone = models.CharField(max_length=255, blank=True, null=True)
-    fax = models.CharField(max_length=255, blank=True, null=True)
-    zipcode = models.CharField(max_length=255, blank=True, null=True)
-    address = models.CharField(max_length=255, blank=True, null=True)
+    phone = models.CharField(max_length=255, blank=True, null=True)#
+    fax = models.CharField(max_length=255, blank=True, null=True)#
+    zipcode = models.CharField(max_length=255, blank=True, null=True)#
+    address = models.CharField(max_length=255, blank=True, null=True)#
     profile = models.TextField(blank=True, null=True)
 
     class Meta:
