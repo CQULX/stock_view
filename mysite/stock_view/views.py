@@ -8,7 +8,7 @@ from django.shortcuts import redirect, render,HttpResponse
 from django.views.decorators.csrf import csrf_exempt 
 from stock_view.models import StockExternal, UserInfo
 from stock_view.code.get_now_data import get_1a0001
-from stock_view.models import UserInfo, TradeInfo,StockHisinfo
+from stock_view.models import UserInfo, TradeInfo,StockHisinfo,StockExternal
 from django.contrib import messages
 
 from stock_view.models import StockInfo,CompanyInfo1
@@ -30,28 +30,27 @@ def checkLogin(func):
             return redirect('/gotologin')
     return warpper
 
+@checkLogin
 def index(request):
-    try:
-        shang_time,shang_value=get_1a0001()
-        shang_time[0]='0930'
-        shen_time,shen_value=get_399001()
-        shen_time[0]='0930'
-        chuang_time,chuang_value=get_399006()
-        chuang_time[0]='0930'
-        shang_value =list(map(float,shang_value))
-        shen_value =list(map(float,shen_value))
-        chuang_value =list(map(float,chuang_value))
-    except:
-        pass
-    try:
-        up_and_down=get_numUpAndDown()
-        stock_sum=0
-        for x in up_and_down:
-            stock_sum=stock_sum+x
-        up_rate=(up_and_down[0]+up_and_down[1]+up_and_down[2])/stock_sum
-        down_rate=(up_and_down[3]+up_and_down[4]+up_and_down[5])/stock_sum
-    except:
-        pass
+    stock_count=StockExternal.objects.all().count()
+    company_count=CompanyInfo1.objects.all().count()
+    user_count=UserInfo.objects.all().count()
+    trade_count=TradeInfo.objects.all().count()
+    shang_time,shang_value=get_1a0001()
+    shang_time[0]='0930'
+    shen_time,shen_value=get_399001()
+    shen_time[0]='0930'
+    chuang_time,chuang_value=get_399006()
+    chuang_time[0]='0930'
+    shang_value =list(map(float,shang_value))
+    shen_value =list(map(float,shen_value))
+    chuang_value =list(map(float,chuang_value))
+    up_and_down=get_numUpAndDown()
+    stock_sum=0
+    for x in up_and_down:
+        stock_sum=stock_sum+x
+    up_rate=(up_and_down[0]+up_and_down[1]+up_and_down[2])/stock_sum
+    down_rate=(up_and_down[3]+up_and_down[4]+up_and_down[5])/stock_sum
     # for i in range(0,len(shang_time)):
     #     a=list(shang_time[i])
     #     # a.insert(-2,':')
@@ -76,8 +75,11 @@ def login(request):
         request.session['login_user']={
                                 'user_name':Nam,
                                 'user_id' :UserInfo.objects.get(name=Nam).id,
-                                'isManager':UserInfo.objects.get(name=Nam).isManager
+                                'isManager':UserInfo.objects.get(name=Nam).isManager,
+                                'isSuperManager':UserInfo.objects.get(name=Nam).isSuperManager,
                             }
+        request.session['login_user']['YesOrNoManager']="yes" if request.session['login_user']['isManager'] == b'\x01' else "no"
+
         return redirect(index)
     else:
         return render(request,"login.html",{"error_msg":"用户名或密码错误"})
@@ -102,7 +104,7 @@ def register(request):
 # def Allrank(request):
 #     objs=StockInfo.objects.all()
 #     return render(request,"general.html",locals())
-
+@checkLogin
 def Allrank(request):
     return render(request,"Allrank.html",{'data':[{'no':stock.no,'id':stock.stock_id,'name':stock.stock_name,
     'price':stock.now_price,'changepercent':stock.changepercent,'changeamount':stock.changeamount,
@@ -113,7 +115,7 @@ def Allrank(request):
     'five_min_up_down':stock.five_min_up_down,'sixty_day_up_down':stock.sixty_day_up_down,
     'yeartodate_up_down':stock.yeartodate_up_down} for stock in StockInfo.objects.all()]})
 
-
+@checkLogin
 def test(request):
     shang_time,shang_value=get_1a0001()
     shang_time[0]='0930'
@@ -126,12 +128,13 @@ def test(request):
     shang_value =list(map(float,shang_value))
     return render(request,"test.html",locals())
 
-
+@checkLogin
 def trl(request):
     trade_list = TradeInfo.objects.all()
 
     return render(request,"trade_ranking_list.html",{"trade_list":trade_list})
 
+@checkLogin
 @csrf_exempt
 def stock_search(request):
     if(request.method=="GET"):
@@ -144,7 +147,7 @@ def stock_search(request):
 
     
     
-
+@checkLogin
 def rankByMap(request):
     address={str(i.stock_id).zfill(6):i.stock_address for i in StockExternal.objects.all()}
     return render(request,"rankByMap.html",{'data':[{'no':stock.no,'id':stock.stock_id,'name':stock.stock_name,
@@ -156,7 +159,7 @@ def rankByMap(request):
     'five_min_up_down':stock.five_min_up_down,'sixty_day_up_down':stock.sixty_day_up_down,
     'yeartodate_up_down':stock.yeartodate_up_down,'address':address.get(stock.stock_id)} for stock in StockInfo.objects.all()]})
 
-
+@checkLogin
 def rankByTrade(request):
     industry={str(i.stock_id).zfill(6):i.stock_industry for i in StockExternal.objects.all()}
     return render(request,"rankByTrade.html",{'data':[{'no':stock.no,'id':stock.stock_id,'name':stock.stock_name,
@@ -168,11 +171,13 @@ def rankByTrade(request):
     'five_min_up_down':stock.five_min_up_down,'sixty_day_up_down':stock.sixty_day_up_down,
     'yeartodate_up_down':stock.yeartodate_up_down,'industry':industry.get(stock.stock_id)} for stock in StockInfo.objects.all()]})
 
+@checkLogin
 @csrf_exempt
 def starbox(request):
     star_list=Favorite.objects.all()
     return render(request, "starbox.html", {"star_list": star_list})
 
+@checkLogin
 @csrf_exempt
 # 根据id列表批量删除数据
 def deleteProductByIdList(request):
@@ -189,6 +194,7 @@ def deleteProductByIdList(request):
         context = {"info": str(res)}
     return JsonResponse({"msg": context})
 
+@checkLogin
 @csrf_exempt
 def company_search(request):
     if(request.method=="GET"):
@@ -201,6 +207,7 @@ def company_search(request):
     # print(name)
     return redirect("./"+name)
 
+@checkLogin
 @csrf_exempt
 def company_search_detail(request,id):
     # print(id)
@@ -258,6 +265,10 @@ def stock_search_detail(request,id):
     if(request.method=="GET"):
         SID=int(id)
         specific_stock=StockInfo.objects.filter(stock_id=id)
+        stock_company=StockExternal.objects.filter(stock_id=SID)
+        for x in stock_company:
+            c_name=x.company_name
+            break
         for x in specific_stock:
             s_name=x.stock_name
             s_price=x.now_price
@@ -292,7 +303,7 @@ def stock_search_detail(request,id):
         return render(request,"stock_search_detail.html",{'name':name,'stock_info_list':stock_info_list,'s_price':s_price,'s_changep':s_changep,'s_changehand':s_changehand,'s_totalvalue':s_totalvalue,
         's_traded_market_value':s_traded_market_value,'s_changea':s_changea,'s_swing':s_swing,'s_high_price':s_high_price,'s_low_price':s_low_price,
         's_open_price':s_open_price,'s_close_price_yesterday':s_close_price_yesterday,'s_quan_ratio':s_quan_ratio,'s_PE':s_PE,'s_PB':s_PB,
-        's_5min_updown':s_5min_updown,'s_60day_updown':s_60day_updown,'s_year_updown':s_year_updown})
+        's_5min_updown':s_5min_updown,'s_60day_updown':s_60day_updown,'s_year_updown':s_year_updown,'c_name':c_name})
     STOCK_ID=request.POST.get('myInput')
     return redirect("./"+STOCK_ID)
      
@@ -305,6 +316,7 @@ def get_trade(request,param1):
 def Usersettings(request):
     return render(request,'userSettings.html')
 
+@checkLogin
 @csrf_exempt
 def UserInfoSet(request):
     mod = UserInfo.objects
@@ -318,6 +330,7 @@ def UserInfoSet(request):
         context = {"info":"修改失败"}
     return JsonResponse({"msg": context})
 
+@checkLogin
 @csrf_exempt
 def changeMyPassword(request):
     mod = UserInfo.objects
@@ -339,8 +352,10 @@ def changeMyPassword(request):
 def setpassword(request):
     return render(request,'setpassword.html')
 
+
 def noUseful(request):
     return render(request,"gotologin.html")
+
 
 @checkLogin
 def manager(request):
@@ -350,9 +365,10 @@ def manager(request):
             return render(request,"notmanager.html")
     except:
         return render(request,"notmanager.html")
-    user=[{"id":i.id,"name":i.name,"password":i.password,"isManager":"yes"if i.isManager == b'\x01' else "no"}for i in UserInfo.objects.all()]
+    user=[{"id":i.id,"name":i.name,"password":i.password,"isManager":"yes"if i.isManager == b'\x01' else "no","isSuperManager":"yes"if i.isSuperManager == b'\x01' else "no"}for i in UserInfo.objects.all()]
     return render(request,"manager.html",{"user":user})
 
+@checkLogin
 @csrf_exempt
 def changeUserInfo(request):
     mod = UserInfo.objects
@@ -362,6 +378,15 @@ def changeUserInfo(request):
     Myis = request.POST.get('isManager')
     Myis = True if Myis == "yes" else False
     print(Myid)
+    if request.session.get('login_user')['isSuperManager'] == b'\x00' and UserInfo.objects.get(id=Myid).isManager == b'\x01':
+        context = {"info":"修改失败，该用户为管理员而你不是超级管理员"}
+        return JsonResponse({"msg": context})
+    if UserInfo.objects.get(id=Myid).isSuperManager == b'\x01':
+        context = {"info":"修改失败，该用户为超级管理员"}
+        return JsonResponse({"msg": context})
+    if request.session.get('login_user')['isSuperManager'] == b'\x00' and Myis == True:
+        context = {"info":"修改失败，你无权增加管理员"}
+        return JsonResponse({"msg": context})
     try:
         mod.filter(id=Myid).update(name=Myname,isManager=Myis,password=Mypassword)
         context = {"info":"修改成功"}
