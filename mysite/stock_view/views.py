@@ -42,20 +42,20 @@ def index(request):
     shen_time[0]='0930'
     chuang_time,chuang_value=get_399006()
     chuang_time[0]='0930'
-    up_and_down=get_numUpAndDown()
-    # for i in range(0,len(shang_time)):
-    #     a=list(shang_time[i])
-    #     # a.insert(-2,':')
-    #     shang_time[i]=''.join(a)
-    # print(shang_time)
     shang_value =list(map(float,shang_value))
     shen_value =list(map(float,shen_value))
     chuang_value =list(map(float,chuang_value))
+    up_and_down=get_numUpAndDown()
     stock_sum=0
     for x in up_and_down:
         stock_sum=stock_sum+x
     up_rate=(up_and_down[0]+up_and_down[1]+up_and_down[2])/stock_sum
     down_rate=(up_and_down[3]+up_and_down[4]+up_and_down[5])/stock_sum
+    # for i in range(0,len(shang_time)):
+    #     a=list(shang_time[i])
+    #     # a.insert(-2,':')
+    #     shang_time[i]=''.join(a)
+    # print(shang_time)
     return render(request,"index.html",locals())
 
 def user_list(request):
@@ -75,7 +75,8 @@ def login(request):
         request.session['login_user']={
                                 'user_name':Nam,
                                 'user_id' :UserInfo.objects.get(name=Nam).id,
-                                'isManager':UserInfo.objects.get(name=Nam).isManager
+                                'isManager':UserInfo.objects.get(name=Nam).isManager,
+                                'isSuperManager':UserInfo.objects.get(name=Nam).isSuperManager,
                             }
         request.session['login_user']['YesOrNoManager']="yes" if request.session['login_user']['isManager'] == b'\x01' else "no"
 
@@ -358,7 +359,7 @@ def manager(request):
             return render(request,"notmanager.html")
     except:
         return render(request,"notmanager.html")
-    user=[{"id":i.id,"name":i.name,"password":i.password,"isManager":"yes"if i.isManager == b'\x01' else "no"}for i in UserInfo.objects.all()]
+    user=[{"id":i.id,"name":i.name,"password":i.password,"isManager":"yes"if i.isManager == b'\x01' else "no","isSuperManager":"yes"if i.isSuperManager == b'\x01' else "no"}for i in UserInfo.objects.all()]
     return render(request,"manager.html",{"user":user})
 
 @checkLogin
@@ -371,6 +372,15 @@ def changeUserInfo(request):
     Myis = request.POST.get('isManager')
     Myis = True if Myis == "yes" else False
     print(Myid)
+    if request.session.get('login_user')['isSuperManager'] == b'\x00' and UserInfo.objects.get(id=Myid).isManager == b'\x01':
+        context = {"info":"修改失败，该用户为管理员而你不是超级管理员"}
+        return JsonResponse({"msg": context})
+    if UserInfo.objects.get(id=Myid).isSuperManager == b'\x01':
+        context = {"info":"修改失败，该用户为超级管理员"}
+        return JsonResponse({"msg": context})
+    if request.session.get('login_user')['isSuperManager'] == b'\x00' and Myis == True:
+        context = {"info":"修改失败，你无权增加管理员"}
+        return JsonResponse({"msg": context})
     try:
         mod.filter(id=Myid).update(name=Myname,isManager=Myis,password=Mypassword)
         context = {"info":"修改成功"}
