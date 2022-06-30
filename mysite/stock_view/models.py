@@ -2,23 +2,23 @@ from django.db import models
 
 # Create your models here.
 class CompanyInfo1(models.Model):
-    company_name = models.CharField(max_length=255, blank=True, null=True)#
-    territory = models.CharField(max_length=255, blank=True, null=True)#
-    industry = models.CharField(max_length=255, blank=True, null=True)#
-    url = models.CharField(max_length=255, blank=True, null=True)#
+    company_name = models.CharField(max_length=255, blank=True, null=True)
+    territory = models.CharField(max_length=255, blank=True, null=True)
+    industry = models.CharField(max_length=255, blank=True, null=True)
+    url = models.CharField(max_length=255, blank=True, null=True)
     business = models.CharField(max_length=255, blank=True, null=True)
     product = models.TextField(blank=True, null=True)
     shareholder = models.CharField(max_length=255, blank=True, null=True)
-    chairman = models.CharField(max_length=255, blank=True, null=True)#
-    board_secretariat = models.CharField(max_length=255, blank=True, null=True)#
-    correp = models.CharField(max_length=255, blank=True, null=True)#
-    generalmanager = models.CharField(max_length=255, blank=True, null=True)#
-    reg_fund = models.CharField(max_length=255, blank=True, null=True)#
-    num_employees = models.CharField(max_length=255, blank=True, null=True)#
-    phone = models.CharField(max_length=255, blank=True, null=True)#
-    fax = models.CharField(max_length=255, blank=True, null=True)#
-    zipcode = models.CharField(max_length=255, blank=True, null=True)#
-    address = models.CharField(max_length=255, blank=True, null=True)#
+    chairman = models.CharField(max_length=255, blank=True, null=True)
+    board_secretariat = models.CharField(max_length=255, blank=True, null=True)
+    correp = models.CharField(max_length=255, blank=True, null=True)
+    generalmanager = models.CharField(max_length=255, blank=True, null=True)
+    reg_fund = models.CharField(max_length=255, blank=True, null=True)
+    num_employees = models.CharField(max_length=255, blank=True, null=True)
+    phone = models.CharField(max_length=255, blank=True, null=True)
+    fax = models.CharField(max_length=255, blank=True, null=True)
+    zipcode = models.CharField(max_length=255, blank=True, null=True)
+    address = models.CharField(max_length=255, blank=True, null=True)
     profile = models.TextField(blank=True, null=True)
 
     class Meta:
@@ -166,6 +166,7 @@ class UserInfo(models.Model):
     password = models.IntegerField()
     name = models.CharField(max_length=255)
     isManager = models.BooleanField()
+    isSuperManager = models.BooleanField()
     class Meta:
         managed = False
         db_table = 'user_info'
