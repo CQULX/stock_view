@@ -239,12 +239,18 @@ def company_search_detail(request,id):
     print(type(stock_id))
     for i in range(0, len(manager)):
         m1=ManagerInfo.objects.get(manager_name=company_info[manager[i]])
-        manager_info[i]['manager_name']=m1.manager_name
-        manager_info[i]['manager_gender']=m1.manager_gender
-        manager_info[i]['manager_age']=m1.manager_age
-        manager_info[i]['manager_edu']=m1.manager_edu
-        manager_info[i]['manager_intro']=m1.manager_intro
-    # print(manager_info[0])
+        if m1:
+            manager_info[i]['manager_name']=m1.manager_name
+            manager_info[i]['manager_gender']=m1.manager_gender
+            manager_info[i]['manager_age']=m1.manager_age
+            manager_info[i]['manager_edu']=m1.manager_edu
+            manager_info[i]['manager_intro']=m1.manager_intro
+        else:
+            manager_info[i]['manager_name']="暂无信息"
+            manager_info[i]['manager_gender']="暂无信息"
+            manager_info[i]['manager_age']="暂无信息"
+            manager_info[i]['manager_edu']="暂无信息"
+            manager_info[i]['manager_intro']="暂无信息"
     # print(company_info)
     return render(request,"company_search_detail.html",{'data':company_info,'manager':manager_info,'stock':stock_id,'company_name':company_name})
 
