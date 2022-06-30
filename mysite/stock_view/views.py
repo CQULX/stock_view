@@ -79,7 +79,6 @@ def login(request):
                                 'isSuperManager':UserInfo.objects.get(name=Nam).isSuperManager,
                             }
         request.session['login_user']['YesOrNoManager']="yes" if request.session['login_user']['isManager'] == b'\x01' else "no"
-
         return redirect(index)
     else:
         return render(request,"login.html",{"error_msg":"用户名或密码错误"})
@@ -174,8 +173,10 @@ def rankByTrade(request):
 @checkLogin
 @csrf_exempt
 def starbox(request):
-    star_list=Favorite.objects.all()
-    return render(request, "starbox.html", {"star_list": star_list})
+    Nam=request.session.get('login_user')['user_name']
+    star_list=Favorite.objects.filter(username=Nam)
+    newstar_list=[{'stock_id':str(i.stock_id).zfill(6),'fav_date':i.fav_date}for i in star_list]
+    return render(request, "starbox.html", {"star_list": newstar_list})
 
 @checkLogin
 @csrf_exempt
