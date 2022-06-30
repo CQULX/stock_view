@@ -76,7 +76,8 @@ def login(request):
         request.session['login_user']={
                                 'user_name':Nam,
                                 'user_id' :UserInfo.objects.get(name=Nam).id,
-                                'isManager':UserInfo.objects.get(name=Nam).isManager
+                                'isManager':UserInfo.objects.get(name=Nam).isManager,
+                                'isSuperManager':UserInfo.objects.get(name=Nam).isSuperManager,
                             }
         return redirect(index)
     else:
@@ -344,7 +345,7 @@ def manager(request):
             return render(request,"notmanager.html")
     except:
         return render(request,"notmanager.html")
-    user=[{"id":i.id,"name":i.name,"password":i.password,"isManager":"yes"if i.isManager == b'\x01' else "no"}for i in UserInfo.objects.all()]
+    user=[{"id":i.id,"name":i.name,"password":i.password,"isManager":"yes"if i.isManager == b'\x01' else "no","isSuperManager":"yes"if i.isSuperManager == b'\x01' else "no"}for i in UserInfo.objects.all()]
     return render(request,"manager.html",{"user":user})
 
 @csrf_exempt
@@ -356,6 +357,15 @@ def changeUserInfo(request):
     Myis = request.POST.get('isManager')
     Myis = True if Myis == "yes" else False
     print(Myid)
+    if request.session.get('login_user')['isSuperManager'] == b'\x00' and UserInfo.objects.get(id=Myid).isManager == b'\x01':
+        context = {"info":"修改失败，该用户为管理员而你不是超级管理员"}
+        return JsonResponse({"msg": context})
+    if UserInfo.objects.get(id=Myid).isSuperManager == b'\x01':
+        context = {"info":"修改失败，该用户为超级管理员"}
+        return JsonResponse({"msg": context})
+    if request.session.get('login_user')['isSuperManager'] == b'\x00' and Myis == True:
+        context = {"info":"修改失败，你无权增加管理员"}
+        return JsonResponse({"msg": context})
     try:
         mod.filter(id=Myid).update(name=Myname,isManager=Myis,password=Mypassword)
         context = {"info":"修改成功"}
