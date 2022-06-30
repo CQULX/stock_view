@@ -838,7 +838,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>地域排行</h1>
+            <h1>行业内部股票排行</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -849,23 +849,85 @@
         </div>
       </div><!-- /.container-fluid -->
     </section>
-
- 
-
-
-    <!-- Main content -->
+<!-- Main content -->
     <div class="card bg-gradient-primary">
         <div class='card-body'>
                 <div id="ChinaMap" style="display: grid; place-items: center;"></div>
         </div>
     </div>
+
+
+   <div class="cate_group">
+                <span class="cate_letter">A~F :</span>
+                <div class="cate_items" style="display: inline ; ">
+{#                                        <a class="div1" id='1'  data-index='0'  haha='333333'>张三</a>#}
+                                         <a id='电子' class="div1" style="padding: 15px;">半导体及元件</a>
+                                        <a id='家用电器' class="div1" style="padding: 15px;">白色家电</a>
+                                        <a id='非银金融' class="div1" style="padding: 15px;">保险及其他</a>
+                                        <a id='传媒' class="div1" style="padding: 15px;">传媒</a>
+                                        <a id='电力设备' class="div1" style="padding: 15px;">电力设备</a>
+                                        <a id='公用事业' class="div1" style="padding: 15px;">公用事业</a>
+                                          <a id='纺织服饰' class="div1" style="padding: 15px;">纺织服饰</a>
+                                        <a id='房地产' class="div1" style="padding: 15px;">房地产服务</a>
+
+                                    </div>
+            </div>
+  <div class="cate_group">
+                <span class="cate_letter">G~J :</span>
+                <div class="cate_items" style="display: inline; ">
+
+                                        <a id='环保' class="div1" style="padding: 15px;">环保</a>
+                                        <a id='计算机' class="div1" style="padding: 15px;">计算机</a>
+                      <a id='国防军工' class="div1" style="padding: 15px;">国防军工</a>
+                    <a id='机械设备' class="div1" style="padding: 15px;">机械设备</a>
+                      <a id='建筑装饰' class="div1" style="padding: 15px;">建筑装饰</a>
+                      <a id='建筑材料' class="div1" style="padding: 15px;">建筑材料</a>
+                        <a id='交通运输' class="div1" style="padding: 15px;">交通运输</a>
+{#                    <a id='交运设备' class="div1">交运设备</a>#}
+                    <a id='金融' class="div1" style="padding: 15px;">金融服务</a>
+                    <a id='基础化工' class="div1" style="padding: 15px;">基础化工</a>
+                    <a id='化工' class="div1" style="padding: 15px;">化工</a>
+{#                    <a id='黑色金属' class="div1">黑丝金属</a>#}
+                    <a id='钢铁' class="div1" style="padding: 15px;">钢铁</a>
+
+                                    </div>
+            </div>
+  <div class="cate_group">
+                <span class="cate_letter">K~O :</span>
+                <div class="cate_items" style="display: inline; ">
+                    <a id='美容护理' class="div1" style="padding: 15px;">美容护理</a>
+                    <a id='煤炭' class="div1" style="padding: 15px;">煤炭</a>
+                      <a id='农林牧渔' class="div1" style="padding: 15px;">农林牧渔</a>
+
+                                    </div>
+            </div>
+                        <div class="cate_group">
+                <span class="cate_letter">P~Z :</span>
+                <div class="cate_items" style="display: inline; ">
+                                          <a id='汽车' class="div1" style="padding: 15px;">汽车服务</a>
+                                        <a id='商贸零售' class="div1" style="padding: 15px;">商贸零售</a>
+                    <a id='轻工制造' class="div1" style="padding: 15px;">轻工制造</a>
+                    <a id='通信' class="div1" style="padding: 15px;">通信</a>
+                    <a id='社会服务' class="div1" style="padding: 15px;">社会服务</a>
+                    <a id='石油石化' class="div1" style="padding: 15px;">石油石化</a>
+                    <a id='食品饮料' class="div1" style="padding: 15px;">食品饮料</a>
+                    <a id='商业贸易' class="div1" style="padding: 15px;">商业贸易</a>
+                                        <a id='银行' class="div1" style="padding: 15px;">银行</a>
+                                        <a id='综合' class="div1" style="padding: 15px;">综合</a>
+                    <a id='医药生物' class="div1" style="padding: 15px;">医药生物</a>
+                    <a id='有色金属' class="div1" style="padding: 15px;">有色金属</a>
+                    <a id='信息设备' class="div1" style="padding: 15px;">信息设备</a>
+{#                    <a id='信息服务' class="div1">信息服务</a>#}
+                                    </div>
+            </div>
+
     <section class="content">
       <div class="container-fluid">
         <div class="row">
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title" id = 'rankTitle'>请选择省份</h3>
+                <h3 class="card-title" id = 'rankTitle'>请选择行业</h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
@@ -883,7 +945,7 @@
                     <th>涨跌额</th>
                     <th>成交量</th>
                     <th>成交额</th>
-                    <th>地域</th>
+                    <th>行业</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -904,7 +966,7 @@
                           <td>{{stock.changeamount}}</td>
                           <td>{{stock.turnover}}</td>
                           <td>{{stock.vol}}</td>
-                          <td>{{stock.address}}</td>
+                          <td>{{stock.industry}}</td>
                           <!-- <td>{{stock.swing}}</td>
                           <td>{{stock.quantity_relative_ratio}}</td>
                           <td>{{stock.turnover_rate}}</td>
@@ -916,7 +978,7 @@
                           <td>{{stock.sixty_day_up_down}}</td>
                           <td>{{stock.yeartodate_up_down}}</td> -->
                       </tr>
-                    {% endfor %}           
+                    {% endfor %}
                   </tbody>
                 </table>
               </div>
@@ -937,7 +999,7 @@
     <div class="float-right d-none d-sm-block">
       <b>Version</b> 3.2.0
     </div>
-    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</option>.</strong> All rights reserved.
   </footer>
 
   <!-- Control Sidebar -->
@@ -971,6 +1033,7 @@
 <script src="../../dist/js/demo.js"></script>
 <!-- Page specific script -->
 <script>
+
   $(function () {
     $("#example1").DataTable({
       "responsive": true, "lengthChange": false, "autoWidth": false,
@@ -986,101 +1049,33 @@
       "responsive": true,
     });
   });
+
+  $('.div1').click(function(event) {
+			var event=event||e;
+			console.log(event.currentTarget.id);  //获取id属性值
+			console.log(event.currentTarget.dataset.name);  //获取自定义data-属性值
+
+			//获取div里的值  2种方法
+			console.log($(this).html());
+			console.log($(this).text());
+			//获取自定义属性的属性值
+			console.log($(this).attr("haha"));
+
+			//获取当前操作下标
+			console.log($(this).index());
+			console.log($('.div1').index(this));
+			{#alert(event.currentTarget.id)#}
+        var table = $('#example1').DataTable();
+                    table
+		            .column(11)
+		            .search(event.currentTarget.id)
+		            .draw();
+		});
 </script>
 
 <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search" id="Mysearch2" value='' hidden>
-<script src="../static/js/raphael.js"></script> 
-<script src="../static/js/chinamapPath.js"></script> 
-<script>
-    window.addEventListener("load",function () {
-        var R = Raphael("ChinaMap", 600, 500);
-        //调用绘制地图方法
-        paintMap(R); 
-     
-        var textAttr = {
-            "fill": "#000",
-            "font-size": "12px",
-            "cursor": "pointer"
-        }; 
-     
-        for (var state in china) {
-            china[state]['path'].color = Raphael.getColor(0.9); 
-     
-            (function (st, state) { 
-     
-            
-                //获取当前图形的中心坐标
-                var xx = st.getBBox().x + (st.getBBox().width / 2);
-                var yy = st.getBBox().y + (st.getBBox().height / 2); 
-                 switch (china[state]['name']) {
-                    case "江苏":
-                        xx += 5;
-                        yy -= 10;
-                        break;
-                    case "河北":
-                        xx -= 10;
-                        yy += 20;
-                        break;
-                    case "天津":
-                        xx += 10;
-                        yy += 10;
-                        break;
-                    case "上海":
-                        xx += 15;
-                        break;
-                    case "广东":
-                        yy -= 10;
-                        break;
-                    case "澳门":
-                        yy += 10;
-                        break;
-                    case "香港":
-                        xx += 20;
-                        yy += 5;
-                        break;
-                    case "甘肃":
-                        xx -= 40;
-                        yy -= 30;
-                        break;
-                    case "陕西":
-                        xx += 5;
-                        yy += 10;
-                        break;
-                    case "内蒙古":
-                        xx -= 15;
-                        yy += 65;
-                        break;
-                    case "北京":
-                        yy -= 10;
-                        break;
-                    default:
-                }
-                //写入文字
-                china[state]['text'] = R.text(xx, yy, china[state]['name']).attr(textAttr); 
+<script src="../static/js/raphael.js"></script>
+<script src="../static/js/chinamapPath.js"></script>
 
-                st[0].onmouseover = function () {//鼠标滑向
-                    st.animate({fill: st.color, stroke: "#eee"}, 500);
-                    china[state]['text'].toFront();
-                    R.safari();
-                };
-                st[0].onmouseout = function () {//鼠标离开
-                    st.animate({fill: "#97d6f5", stroke: "#eee"}, 500);
-                    china[state]['text'].toFront();
-                    R.safari();
-                }; 
-                st[0].onclick = function(){
-                    document.getElementById('rankTitle').innerText= china[state]['name']+'排行榜';
-                    var table = $('#example1').DataTable();
-                    table
-		            .column(11)
-		            .search(china[state]['name'])
-		            .draw();
-                };
-             })(china[state]['path'], state);
-        }
-        alert()
-    })
-
-</script>
 </body>
 </html>

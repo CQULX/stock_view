@@ -834,102 +834,43 @@
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1>地域排行</h1>
-          </div>
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">DataTables</li>
-            </ol>
-          </div>
-        </div>
-      </div><!-- /.container-fluid -->
-    </section>
-
- 
-
-
     <!-- Main content -->
-    <div class="card bg-gradient-primary">
-        <div class='card-body'>
-                <div id="ChinaMap" style="display: grid; place-items: center;"></div>
-        </div>
-    </div>
-    <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-12">
-            <div class="card">
-              <div class="card-header">
-                <h3 class="card-title" id = 'rankTitle'>请选择省份</h3>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <table id="example1" class="table table-bordered table-striped">
-                  <thead>
-                  <tr>
-                    <th>股票代码</th>
-                    <th>股票名称</th>
-                    <th>现价</th>
-                    <th>最高</th>
-                    <th>最低</th>
-                    <th>开盘</th>
-                    <th>昨收</th>
-                    <th>涨跌幅</th>
-                    <th>涨跌额</th>
-                    <th>成交量</th>
-                    <th>成交额</th>
-                    <th>地域</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                    {% for stock in data %}
-                      <tr>
-                          <td>{{stock.id}}</td>
-                          <td>{{stock.name}}</td>
-                          <td>{{stock.price}}</td>
-                          <td>{{stock.high_price}}</td>
-                          <td>{{stock.low_price}}</td>
-                          <td>{{stock.open_price}}</td>
-                          <td>{{stock.close_price_yesterday}}</td>
-                          {% if stock.changepercent > 0 %}
-                          <td class="description-percentage text-danger">{{stock.changepercent}}%<i class="fas fa-caret-up"></i></td>
-                          {% else %}
-                          <td class="description-percentage text-success">{{stock.changepercent}}%<i class="fas fa-caret-down"></i></td>
-                          {% endif %}
-                          <td>{{stock.changeamount}}</td>
-                          <td>{{stock.turnover}}</td>
-                          <td>{{stock.vol}}</td>
-                          <td>{{stock.address}}</td>
-                          <!-- <td>{{stock.swing}}</td>
-                          <td>{{stock.quantity_relative_ratio}}</td>
-                          <td>{{stock.turnover_rate}}</td>
-                          <td>{{stock.pe}}</td>
-                          <td>{{stock.pb}}</td>
-                          <td>{{stock.total_value}}</td>
-                          <td>{{stock.higher_speed}}</td>
-                          <td>{{stock.five_min_up_down}}</td>
-                          <td>{{stock.sixty_day_up_down}}</td>
-                          <td>{{stock.yeartodate_up_down}}</td> -->
-                      </tr>
-                    {% endfor %}           
-                  </tbody>
-                </table>
-              </div>
-              <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
-        </div>
-        <!-- /.row -->
+    <div class="card card-primary">
+      <div class="card-header">
+        <h3 class="card-title">个人信息</h3>
       </div>
-      <!-- /.container-fluid -->
-    </section>
+      <!-- /.card-header -->
+      <!-- form start -->
+      <form>
+        <div class="card-body">
+          <div class="form-group">
+            <label for="exampleInputEmail1">id</label>
+            <input type="text" class="form-control" id="MyID" placeholder="Enter email" readonly value={{request.session.login_user.user_id}}>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">用户名</label>
+            <input type="text" class="form-control" id="MyName" placeholder="Password" value={{request.session.login_user.user_name}}>
+          </div>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+          <button type="button" class="btn btn-primary" id="submitChange" onclick="sub()">提交修改</button>
+        </div>
+      </form>
+    </div>
+<script>
+  function sub(){
+    $.ajax({
+		url:"/UserSet/",
+		type:"post",
+		data:{"id":$(MyID).val(),"name":$(MyName).val()},
+		success:function(result){
+			alert(result.msg.info);
+		}
+	});
+  }
+</script>
+  </div>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
@@ -988,99 +929,5 @@
   });
 </script>
 
-<input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search" id="Mysearch2" value='' hidden>
-<script src="../static/js/raphael.js"></script> 
-<script src="../static/js/chinamapPath.js"></script> 
-<script>
-    window.addEventListener("load",function () {
-        var R = Raphael("ChinaMap", 600, 500);
-        //调用绘制地图方法
-        paintMap(R); 
-     
-        var textAttr = {
-            "fill": "#000",
-            "font-size": "12px",
-            "cursor": "pointer"
-        }; 
-     
-        for (var state in china) {
-            china[state]['path'].color = Raphael.getColor(0.9); 
-     
-            (function (st, state) { 
-     
-            
-                //获取当前图形的中心坐标
-                var xx = st.getBBox().x + (st.getBBox().width / 2);
-                var yy = st.getBBox().y + (st.getBBox().height / 2); 
-                 switch (china[state]['name']) {
-                    case "江苏":
-                        xx += 5;
-                        yy -= 10;
-                        break;
-                    case "河北":
-                        xx -= 10;
-                        yy += 20;
-                        break;
-                    case "天津":
-                        xx += 10;
-                        yy += 10;
-                        break;
-                    case "上海":
-                        xx += 15;
-                        break;
-                    case "广东":
-                        yy -= 10;
-                        break;
-                    case "澳门":
-                        yy += 10;
-                        break;
-                    case "香港":
-                        xx += 20;
-                        yy += 5;
-                        break;
-                    case "甘肃":
-                        xx -= 40;
-                        yy -= 30;
-                        break;
-                    case "陕西":
-                        xx += 5;
-                        yy += 10;
-                        break;
-                    case "内蒙古":
-                        xx -= 15;
-                        yy += 65;
-                        break;
-                    case "北京":
-                        yy -= 10;
-                        break;
-                    default:
-                }
-                //写入文字
-                china[state]['text'] = R.text(xx, yy, china[state]['name']).attr(textAttr); 
-
-                st[0].onmouseover = function () {//鼠标滑向
-                    st.animate({fill: st.color, stroke: "#eee"}, 500);
-                    china[state]['text'].toFront();
-                    R.safari();
-                };
-                st[0].onmouseout = function () {//鼠标离开
-                    st.animate({fill: "#97d6f5", stroke: "#eee"}, 500);
-                    china[state]['text'].toFront();
-                    R.safari();
-                }; 
-                st[0].onclick = function(){
-                    document.getElementById('rankTitle').innerText= china[state]['name']+'排行榜';
-                    var table = $('#example1').DataTable();
-                    table
-		            .column(11)
-		            .search(china[state]['name'])
-		            .draw();
-                };
-             })(china[state]['path'], state);
-        }
-        alert()
-    })
-
-</script>
 </body>
 </html>
