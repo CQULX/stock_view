@@ -1,13 +1,15 @@
+from turtle import st
 from django.http import JsonResponse
 from django.shortcuts import redirect, render,HttpResponse
 from django.views.decorators.csrf import csrf_exempt 
 from stock_view.code.get_now_data import get_1a0001,get_399001,get_399006,get_numUpAndDown
 from stock_view.models import StockExternal, UserInfo
 from stock_view.code.get_now_data import get_1a0001
-from stock_view.models import UserInfo, TradeInfo
+from stock_view.models import UserInfo, TradeInfo,StockHisinfo
 from django.contrib import messages
 from stock_view.models import StockInfo
 from stock_view.models import Favorite
+import math
 # Create your views here.
 def index(request):
 
@@ -101,15 +103,18 @@ def trl(request):
 
     return render(request,"trade_ranking_list.html",{"trade_list":trade_list})
 
-
+@csrf_exempt
 def stock_search(request):
-    id_name={}
-    stock_name=[]
-    for stock in StockInfo.objects.all():
-        id_name[stock.stock_id]=stock.stock_name
-        stock_name.append(stock.stock_name)
-    print(stock_name)
-    return render(request,"stock_search.html",locals())
+    if(request.method=="GET"):
+        return render(request,"stock_search.html")
+    STOCK_ID=request.POST.get('myInput')
+    print(STOCK_ID)
+    return redirect("./"+STOCK_ID)
+    
+
+
+    
+    
 
 
 def rankByMap(request):
@@ -145,3 +150,46 @@ def deleteProductByIdList(request):
         context = {"info": str(res)}
     return JsonResponse({"msg": context})
 
+def stock_search_detail(request,id):
+    if(request.method=="GET"):
+        SID=int(id)
+        specific_stock=StockInfo.objects.filter(stock_id=id)
+        for x in specific_stock:
+            s_name=x.stock_name
+            s_price=x.now_price
+            s_changep=x.changepercent
+            s_changea=x.changeamount
+            s_changehand=x.turnover_rate
+            s_totalvalue=str(round(x.total_value/100000000,2))
+            s_traded_market_value=str(round(x.traded_market_value/100000000,2))
+            s_swing=x.swing
+            s_high_price=x.high_price
+            s_low_price=x.low_price
+            s_open_price=x.open_price
+            s_close_price_yesterday=x.close_price_yesterday
+            s_quan_ratio=x.quantity_relative_ratio
+            s_PE=x.pe
+            s_PB=x.pb
+            s_5min_updown=x.five_min_up_down
+            s_60day_updown=x.sixty_day_up_down
+            s_year_updown=x.yeartodate_up_down
+            break
+        stock_info=StockHisinfo.objects.filter(stock_id=SID)
+        stock_info_list=[]
+        for info in stock_info:
+            tmp=[]
+            tmp.append(str(info.stock_date).replace('-','/'))
+            tmp.append(info.open_price)
+            tmp.append(info.close_price)
+            tmp.append(info.low_price)
+            tmp.append(info.high_price)
+            stock_info_list.append(tmp)
+        name=id+" "+s_name
+        return render(request,"stock_search_detail.html",{'name':name,'stock_info_list':stock_info_list,'s_price':s_price,'s_changep':s_changep,'s_changehand':s_changehand,'s_totalvalue':s_totalvalue,
+        's_traded_market_value':s_traded_market_value,'s_changea':s_changea,'s_swing':s_swing,'s_high_price':s_high_price,'s_low_price':s_low_price,
+        's_open_price':s_open_price,'s_close_price_yesterday':s_close_price_yesterday,'s_quan_ratio':s_quan_ratio,'s_PE':s_PE,'s_PB':s_PB,
+        's_5min_updown':s_5min_updown,'s_60day_updown':s_60day_updown,'s_year_updown':s_year_updown})
+    STOCK_ID=request.POST.get('myInput')
+    return redirect("./"+STOCK_ID)
+     
+    
