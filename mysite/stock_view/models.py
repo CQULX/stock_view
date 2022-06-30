@@ -165,7 +165,7 @@ class UserInfo(models.Model):
     id = models.AutoField(primary_key=True)
     password = models.IntegerField()
     name = models.CharField(max_length=255)
-
+    isManager = models.BooleanField()
     class Meta:
         managed = False
         db_table = 'user_info'

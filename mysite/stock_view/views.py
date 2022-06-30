@@ -1,15 +1,35 @@
+<<<<<<< HEAD
 from logging import Manager
+=======
+from turtle import st
+>>>>>>> 7ad673aa93b3d594e4390b15a5fabe79e56574e9
 from django.http import JsonResponse
 from django.shortcuts import redirect, render,HttpResponse
 from django.views.decorators.csrf import csrf_exempt 
-from stock_view.code.get_now_data import get_1a0001,get_399001,get_399006,get_numUpAndDown
 from stock_view.models import StockExternal, UserInfo
 from stock_view.code.get_now_data import get_1a0001
-from stock_view.models import UserInfo, TradeInfo
+from stock_view.models import UserInfo, TradeInfo,StockHisinfo
 from django.contrib import messages
+<<<<<<< HEAD
 from stock_view.models import StockInfo,CompanyInfo1
 from stock_view.models import Favorite,ManagerInfo
+=======
+from stock_view.models import StockInfo
+from stock_view.models import Favorite
+import math
+from stock_view.code.get_stock_info import update
+from stock_view.code.get_now_data import get_1a0001,get_399001,get_399006,get_numUpAndDown
+>>>>>>> 7ad673aa93b3d594e4390b15a5fabe79e56574e9
 # Create your views here.
+
+def checkLogin(func):
+    def warpper(request,*args,**kwargs):
+        if request.session.get('login_user', False):
+            return func(request, *args, **kwargs)
+        else:
+            return redirect('/gotologin')
+    return warpper
+
 def index(request):
 
     shang_time,shang_value=get_1a0001()
@@ -48,6 +68,11 @@ def login(request):
     pwd=request.POST.get('password')
     name_obj=UserInfo.objects.filter(name=Nam,password=pwd)
     if(len(name_obj)!=0):
+        request.session['login_user']={
+                                'user_name':Nam,
+                                'user_id' :UserInfo.objects.get(name=Nam).id,
+                                'isManager':UserInfo.objects.get(name=Nam).isManager
+                            }
         return redirect(index)
     else:
         return render(request,"login.html",{"error_msg":"用户名或密码错误"})
@@ -102,16 +127,18 @@ def trl(request):
 
     return render(request,"trade_ranking_list.html",{"trade_list":trade_list})
 
-
+@csrf_exempt
 def stock_search(request):
-    id_name={}
-    stock_name=[]
-    for stock in StockInfo.objects.all():
-        id_name[stock.stock_id]=stock.stock_name
-        stock_name.append(stock.stock_name)
-    print(stock_name)
-    return render(request,"stock_search.html",locals())
+    if(request.method=="GET"):
+        return render(request,"stock_search.html")
+    STOCK_ID=request.POST.get('myInput')
+    print(STOCK_ID)
+    return redirect("./"+STOCK_ID)
+    
 
+
+    
+    
 
 def rankByMap(request):
     address={str(i.stock_id).zfill(6):i.stock_address for i in StockExternal.objects.all()}
@@ -125,12 +152,23 @@ def rankByMap(request):
     'yeartodate_up_down':stock.yeartodate_up_down,'address':address.get(stock.stock_id)} for stock in StockInfo.objects.all()]})
 
 
+def rankByTrade(request):
+    industry={str(i.stock_id).zfill(6):i.stock_industry for i in StockExternal.objects.all()}
+    return render(request,"rankByTrade.html",{'data':[{'no':stock.no,'id':stock.stock_id,'name':stock.stock_name,
+    'price':stock.now_price,'changepercent':stock.changepercent,'changeamount':stock.changeamount,
+    'turnover':stock.turnover,'vol':stock.vol,'swing':stock.swing,'high_price':stock.high_price,
+    'low_price':stock.low_price,'open_price':stock.open_price,'close_price_yesterday':stock.close_price_yesterday,
+    'quantity_relative_ratio':stock.quantity_relative_ratio,'turnover_rate':stock.turnover_rate,'pe':stock.pe,
+    'pb':stock.pb,'total_value':stock.total_value,'higher_speed':stock.higher_speed,
+    'five_min_up_down':stock.five_min_up_down,'sixty_day_up_down':stock.sixty_day_up_down,
+    'yeartodate_up_down':stock.yeartodate_up_down,'industry':industry.get(stock.stock_id)} for stock in StockInfo.objects.all()]})
 
 @csrf_exempt
 def starbox(request):
     star_list=Favorite.objects.all()
-    return render(request,"starbox.html",{"star_list":star_list})
+    return render(request, "starbox.html", {"star_list": star_list})
 
+@csrf_exempt
 # 根据id列表批量删除数据
 def deleteProductByIdList(request):
     mod = Favorite.objects
@@ -194,3 +232,119 @@ def company_search_detail(request,id):
     # print(manager_info[0])
     # print(company_info)
     return render(request,"company_search_detail.html",{'data':company_info,'manager':manager_info})
+
+def stock_search_detail(request,id):
+    if(request.method=="GET"):
+        SID=int(id)
+        specific_stock=StockInfo.objects.filter(stock_id=id)
+        for x in specific_stock:
+            s_name=x.stock_name
+            s_price=x.now_price
+            s_changep=x.changepercent
+            s_changea=x.changeamount
+            s_changehand=x.turnover_rate
+            s_totalvalue=str(round(x.total_value/100000000,2))
+            s_traded_market_value=str(round(x.traded_market_value/100000000,2))
+            s_swing=x.swing
+            s_high_price=x.high_price
+            s_low_price=x.low_price
+            s_open_price=x.open_price
+            s_close_price_yesterday=x.close_price_yesterday
+            s_quan_ratio=x.quantity_relative_ratio
+            s_PE=x.pe
+            s_PB=x.pb
+            s_5min_updown=x.five_min_up_down
+            s_60day_updown=x.sixty_day_up_down
+            s_year_updown=x.yeartodate_up_down
+            break
+        stock_info=StockHisinfo.objects.filter(stock_id=SID)
+        stock_info_list=[]
+        for info in stock_info:
+            tmp=[]
+            tmp.append(str(info.stock_date).replace('-','/'))
+            tmp.append(info.open_price)
+            tmp.append(info.close_price)
+            tmp.append(info.low_price)
+            tmp.append(info.high_price)
+            stock_info_list.append(tmp)
+        name=id+" "+s_name
+        return render(request,"stock_search_detail.html",{'name':name,'stock_info_list':stock_info_list,'s_price':s_price,'s_changep':s_changep,'s_changehand':s_changehand,'s_totalvalue':s_totalvalue,
+        's_traded_market_value':s_traded_market_value,'s_changea':s_changea,'s_swing':s_swing,'s_high_price':s_high_price,'s_low_price':s_low_price,
+        's_open_price':s_open_price,'s_close_price_yesterday':s_close_price_yesterday,'s_quan_ratio':s_quan_ratio,'s_PE':s_PE,'s_PB':s_PB,
+        's_5min_updown':s_5min_updown,'s_60day_updown':s_60day_updown,'s_year_updown':s_year_updown})
+    STOCK_ID=request.POST.get('myInput')
+    return redirect("./"+STOCK_ID)
+     
+
+def get_trade(request,param1):
+    star_list=Favorite.objects.all()
+    return redirect(index)
+
+@checkLogin
+def Usersettings(request):
+    return render(request,'userSettings.html')
+
+@csrf_exempt
+def UserInfoSet(request):
+    mod = UserInfo.objects
+    Myid = request.POST.get('id')
+    newname = request.POST.get('name')
+    print(Myid)
+    try:
+        mod.filter(id=Myid).update(name=newname)
+        context = {"info":"修改成功"}
+    except:
+        context = {"info":"修改失败"}
+    return JsonResponse({"msg": context})
+
+@csrf_exempt
+def changeMyPassword(request):
+    mod = UserInfo.objects
+    Myid = request.POST.get('id')
+    print(Myid)
+    oldpassword = request.POST.get('oldpassword')
+    newpassword = request.POST.get('newpassword')
+    name_obj=UserInfo.objects.filter(id=Myid,password=oldpassword)
+    if len(name_obj)==0:
+        return JsonResponse({"msg":{"info":"密码错误"}})
+    try:
+        mod.filter(id=Myid).update(password=newpassword)
+        context = {"info":"修改成功"}
+    except:
+        context = {"info":"修改失败"}
+    return JsonResponse({"msg": context})
+
+@checkLogin
+def setpassword(request):
+    return render(request,'setpassword.html')
+
+def noUseful(request):
+    return render(request,"gotologin.html")
+
+@checkLogin
+def manager(request):
+    print(request.session.get('login_user')['isManager'])
+    try:
+        if request.session.get('login_user')['isManager'] == b'\x00':
+            return render(request,"notmanager.html")
+    except:
+        return render(request,"notmanager.html")
+    user=[{"id":i.id,"name":i.name,"password":i.password,"isManager":"yes"if i.isManager == b'\x01' else "no"}for i in UserInfo.objects.all()]
+    return render(request,"manager.html",{"user":user})
+
+@csrf_exempt
+def changeUserInfo(request):
+    mod = UserInfo.objects
+    Myid = request.POST.get('id')
+    Myname = request.POST.get('name')
+    Mypassword = request.POST.get('password')
+    Myis = request.POST.get('isManager')
+    Myis = True if Myis == "yes" else False
+    print(Myid)
+    try:
+        mod.filter(id=Myid).update(name=Myname,isManager=Myis,password=Mypassword)
+        context = {"info":"修改成功"}
+    except:
+        context = {"info":"修改失败"}
+    return JsonResponse({"msg": context})
+
