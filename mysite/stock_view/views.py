@@ -4,7 +4,7 @@ from django.shortcuts import redirect, render,HttpResponse
 from django.views.decorators.csrf import csrf_exempt 
 from stock_view.models import StockExternal, UserInfo
 from stock_view.code.get_now_data import get_1a0001
-from stock_view.models import UserInfo, TradeInfo,StockHisinfo
+from stock_view.models import UserInfo, TradeInfo,StockHisinfo,StockExternal
 from django.contrib import messages
 from stock_view.models import StockInfo
 from stock_view.models import Favorite
@@ -179,6 +179,10 @@ def stock_search_detail(request,id):
     if(request.method=="GET"):
         SID=int(id)
         specific_stock=StockInfo.objects.filter(stock_id=id)
+        stock_company=StockExternal.objects.filter(stock_id=SID)
+        for x in stock_company:
+            c_name=x.company_name
+            break
         for x in specific_stock:
             s_name=x.stock_name
             s_price=x.now_price
@@ -213,7 +217,7 @@ def stock_search_detail(request,id):
         return render(request,"stock_search_detail.html",{'name':name,'stock_info_list':stock_info_list,'s_price':s_price,'s_changep':s_changep,'s_changehand':s_changehand,'s_totalvalue':s_totalvalue,
         's_traded_market_value':s_traded_market_value,'s_changea':s_changea,'s_swing':s_swing,'s_high_price':s_high_price,'s_low_price':s_low_price,
         's_open_price':s_open_price,'s_close_price_yesterday':s_close_price_yesterday,'s_quan_ratio':s_quan_ratio,'s_PE':s_PE,'s_PB':s_PB,
-        's_5min_updown':s_5min_updown,'s_60day_updown':s_60day_updown,'s_year_updown':s_year_updown})
+        's_5min_updown':s_5min_updown,'s_60day_updown':s_60day_updown,'s_year_updown':s_year_updown,'c_name':c_name})
     STOCK_ID=request.POST.get('myInput')
     return redirect("./"+STOCK_ID)
      
