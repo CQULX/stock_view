@@ -30,6 +30,7 @@ def checkLogin(func):
             return redirect('/gotologin')
     return warpper
 
+@checkLogin
 def index(request):
     stock_count=StockExternal.objects.all().count()
     company_count=CompanyInfo1.objects.all().count()
@@ -182,7 +183,7 @@ def rankByTrade(request):
 def starbox(request):
     Nam = request.session.get('login_user')['user_name']
     star_list = Favorite.objects.filter(username=Nam)
-    newstar_list = [{'stock_id': str(i.stock_id).zfill(6), 'fav_date': i.fav_date} for i in star_list]
+    newstar_list = [{'id': str(i.stock_id).zfill(6), 'fav_date': i.fav_date,'stock_name':i.stock_name} for i in star_list]
     return render(request, "starbox.html", {"star_list": newstar_list})
 
 
@@ -456,7 +457,8 @@ def addProduct(request):
     now_date=time.localtime()
     now_date=str(now_date[0])+str("-")+str(now_date[1]).zfill(2)+str("-")+str(now_date[2]).zfill(2)
     try:
-        mod.create(stock_id=stock_id,username=request.session['login_user']['user_name'],fav_date=now_date) 
+        mod.create(stock_id=stock_id,username=request.session['login_user']['user_name'],fav_date=now_date,stock_name=
+        StockInfo.objects.get(stock_id=stock_id).stock_name) 
         return JsonResponse({"msg":  {"info":"收藏成功"}})
     except:
         return JsonResponse({"msg": {"info":"操作失败"}})
