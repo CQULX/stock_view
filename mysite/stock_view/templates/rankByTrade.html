@@ -399,11 +399,15 @@
       "responsive": true,
     });
   });
-
+var name=''
   $('.div1').click(function(event) {
+            D=document.getElementById('rankTitle');
+
 			var event=event||e;
 			console.log(event.currentTarget.id);  //获取id属性值
 			console.log(event.currentTarget.dataset.name);  //获取自定义data-属性值
+            name=event.currentTarget.id
+
 
 			//获取div里的值  2种方法
 			console.log($(this).html());
@@ -420,6 +424,7 @@
 		            .column(11)
 		            .search(event.currentTarget.id)
 		            .draw();
+            D.innerText=name;
 		});
 </script>
 
