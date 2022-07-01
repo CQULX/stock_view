@@ -30,7 +30,7 @@ class Favorite(models.Model):
     id = models.IntegerField(primary_key=True)
     stock_id = models.IntegerField()
     fav_date = models.DateField(blank=True, null=True)
-
+    username = models.CharField(max_length=255, blank=True, null=True)
     class Meta:
         managed = False
         db_table = 'favorite'

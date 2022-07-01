@@ -174,8 +174,11 @@ def rankByTrade(request):
 @checkLogin
 @csrf_exempt
 def starbox(request):
-    star_list=Favorite.objects.all()
-    return render(request, "starbox.html", {"star_list": star_list})
+    Nam = request.session.get('login_user')['user_name']
+    star_list = Favorite.objects.filter(username=Nam)
+    newstar_list = [{'stock_id': str(i.stock_id).zfill(6), 'fav_date': i.fav_date} for i in star_list]
+    return render(request, "starbox.html", {"star_list": newstar_list})
+
 
 @checkLogin
 @csrf_exempt
@@ -247,17 +250,17 @@ def company_search_detail(request,id):
     for i in range(0, len(manager)):
         m1=ManagerInfo.objects.get(manager_name=company_info[manager[i]])
         if m1:
-            manager_info[i]['manager_name']=m1.manager_name
-            manager_info[i]['manager_gender']=m1.manager_gender
-            manager_info[i]['manager_age']=m1.manager_age
-            manager_info[i]['manager_edu']=m1.manager_edu
-            manager_info[i]['manager_intro']=m1.manager_intro
+            manager_info[i]['manager_name'] = m1.manager_name
+            manager_info[i]['manager_gender'] = m1.manager_gender
+            manager_info[i]['manager_age'] = m1.manager_age
+            manager_info[i]['manager_edu'] = m1.manager_edu
+            manager_info[i]['manager_intro'] = m1.manager_intro
         else:
-            manager_info[i]['manager_name']="暂无信息"
-            manager_info[i]['manager_gender']="暂无信息"
-            manager_info[i]['manager_age']="暂无信息"
-            manager_info[i]['manager_edu']="暂无信息"
-            manager_info[i]['manager_intro']="暂无信息"
+            manager_info[i]['manager_name'] = "暂无信息"
+            manager_info[i]['manager_gender'] = "暂无信息"
+            manager_info[i]['manager_age'] = "暂无信息"
+            manager_info[i]['manager_edu'] = "暂无信息"
+            manager_info[i]['manager_intro'] = "暂无信息"
     # print(company_info)
     return render(request,"company_search_detail.html",{'data':company_info,'manager':manager_info,'stock':stock_id,'company_name':company_name})
 
