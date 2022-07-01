@@ -962,7 +962,7 @@
               <div class="row">
                 <div class="col-md-9">
                   <p class="text-center">
-                    <strong>{{name|safe}}</strong>
+                    <strong value={{name|safe}}>{{name|safe}}</strong>
                   </p>
 
                   <div class="chart">
@@ -1016,7 +1016,39 @@
                           <i class="ion ion-stats-bars"></i>
                     </div>
                   </div>
-                  
+                  <a class="btn btn-app" onclick="fav()" id="like2">
+                    <i class="fas fa-heart"></i><spqn id="like">收藏</spqn>
+                  </a>
+                  <input hidden id="stock_id_name" value={{name|safe}}>
+                  <script>
+                    function fav(){
+                        D=document.getElementById('like');
+                        if(D.innerText=="收藏"){
+                              D.innerText="取消收藏";
+                              document.getElementById('like2').className="btn btn-app bg-info";
+                              $.ajax({
+                                    url:"/addProduct/",
+                                    type:"post",
+                                    data:{"stock_id":$(stock_id_name).val()},
+                                    success:function(result){
+                                      alert(result.msg.info);
+                                    }
+                              })
+                        }
+                        else{
+                              D.innerText="收藏";
+                              document.getElementById('like2').className="btn btn-app";
+                              $.ajax({
+                                    url:"/deleteProduct/",
+                                    type:"post",
+                                    data:{"stock_id":$(stock_id_name).val()},
+                                    success:function(result){
+                                      alert(result.msg.info);
+                                    }
+                              })
+                        }
+                    }
+                  </script>
                   <!-- /.progress-group -->
                 </div>
                 <!-- /.col -->

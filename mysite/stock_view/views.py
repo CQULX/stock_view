@@ -1,6 +1,6 @@
 
 from logging import Manager
-
+import time
 from turtle import st
 
 from django.http import JsonResponse
@@ -262,6 +262,8 @@ def company_search_detail(request,id):
     # print(company_info)
     return render(request,"company_search_detail.html",{'data':company_info,'manager':manager_info,'stock':stock_id,'company_name':company_name})
 
+@checkLogin
+@csrf_exempt
 def stock_search_detail(request,id):
     if(request.method=="GET"):
         SID=int(id)
@@ -394,4 +396,30 @@ def changeUserInfo(request):
     except:
         context = {"info":"修改失败"}
     return JsonResponse({"msg": context})
+
+@checkLogin
+@csrf_exempt
+def deleteProduct(request):
+    mod = Favorite.objects
+    stock_id=request.POST.get('stock_id')
+    print(stock_id)
+    try:
+        mod.get(stock_id=stock_id,username=request.session['login_user']['user_name']).delete()
+        return JsonResponse({"msg": {"info":"取消收藏成功"}})
+    except:
+        return JsonResponse({"msg": {"info":"操作失败"}})
+
+
+@checkLogin
+@csrf_exempt
+def addProduct(request):
+    mod = Favorite.objects
+    stock_id=request.POST.get('stock_id')
+    now_date=time.localtime()
+    now_date=str(now_date[0])+str("-")+str(now_date[1]).zfill(2)+str("-")+str(now_date[2]).zfill(2)
+    try:
+        mod.create(stock_id=stock_id,username=request.session['login_user']['user_name'],fav_date=now_date) 
+        return JsonResponse({"msg":  {"info":"收藏成功"}})
+    except:
+        return JsonResponse({"msg": {"info":"操作失败"}})
 

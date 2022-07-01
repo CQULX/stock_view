@@ -44,5 +44,7 @@ urlpatterns = [
     path('manager/',views.manager),
     path('notmanager/',views.noUseful),
     path('changeUserInfo/',views.changeUserInfo),
-    re_path(r'^trade/(.+)/$', views.get_trade)
+    re_path(r'^trade/(.+)/$', views.get_trade),
+    path('addProduct/',views.addProduct),
+    path('deleteProduct/',views.deleteProduct),
 ]
