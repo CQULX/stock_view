@@ -30,7 +30,6 @@ def checkLogin(func):
             return redirect('/gotologin')
     return warpper
 
-@checkLogin
 def index(request):
     stock_count=StockExternal.objects.all().count()
     company_count=CompanyInfo1.objects.all().count()
@@ -79,6 +78,7 @@ def login(request):
                                 'isSuperManager':UserInfo.objects.get(name=Nam).isSuperManager,
                             }
         request.session['login_user']['YesOrNoManager']="yes" if request.session['login_user']['isManager'] == b'\x01' else "no"
+
         return redirect(index)
     else:
         return render(request,"login.html",{"error_msg":"用户名或密码错误"})
@@ -128,12 +128,6 @@ def test(request):
     return render(request,"test.html",locals())
 
 @checkLogin
-def trl(request):
-    trade_list = TradeInfo.objects.all()
-
-    return render(request,"trade_ranking_list.html",{"trade_list":trade_list})
-
-@checkLogin
 @csrf_exempt
 def stock_search(request):
     if(request.method=="GET"):
@@ -141,7 +135,20 @@ def stock_search(request):
     STOCK_ID=request.POST.get('myInput')
     print(STOCK_ID)
     return redirect("./"+STOCK_ID)
-    
+
+
+# @checkLogin
+@csrf_exempt
+def trade_search(request):
+    if(request.method=="GET"):
+        trade_name=[]
+        for trade in TradeInfo.objects.all():
+            trade_name.append(trade.trade_name)
+
+        return render(request,"trade_search.html",{'trade_name':trade_name})
+    name=request.POST.get('myInput')
+    # print(name)
+    return redirect("./"+name)
 
 
     
@@ -173,10 +180,11 @@ def rankByTrade(request):
 @checkLogin
 @csrf_exempt
 def starbox(request):
-    Nam=request.session.get('login_user')['user_name']
-    star_list=Favorite.objects.filter(username=Nam)
-    newstar_list=[{'stock_id':str(i.stock_id).zfill(6),'fav_date':i.fav_date}for i in star_list]
+    Nam = request.session.get('login_user')['user_name']
+    star_list = Favorite.objects.filter(username=Nam)
+    newstar_list = [{'stock_id': str(i.stock_id).zfill(6), 'fav_date': i.fav_date} for i in star_list]
     return render(request, "starbox.html", {"star_list": newstar_list})
+
 
 @checkLogin
 @csrf_exempt
@@ -259,11 +267,41 @@ def company_search_detail(request,id):
             manager_info[i]['manager_age']="暂无信息"
             manager_info[i]['manager_edu']="暂无信息"
             manager_info[i]['manager_intro']="暂无信息"
+    # print(manager_info[0])
     # print(company_info)
     return render(request,"company_search_detail.html",{'data':company_info,'manager':manager_info,'stock':stock_id,'company_name':company_name})
 
+
 @checkLogin
 @csrf_exempt
+def trade_search_detail(request,id):
+    # print(id)
+    if(request.method=="POST"):
+        name=request.POST.get('myInput')
+        return redirect("../"+name)
+    trade_name=[]
+    for trade in TradeInfo.objects.all():
+        trade_name.append(trade.trade_name)
+    trade=TradeInfo.objects.get(trade_name=id)
+    # print(company.company_name)
+    trade_info={}
+
+    trade_info['trade_name']=trade.trade_name
+    trade_info['trade_crise']=trade.trade_crise
+    trade_info['trade_goodmoney']=trade.trade_goodmoney
+    trade_info['trade_amount']=trade.trade_amount
+    trade_info['trade_today']=trade.trade_today
+    trade_info['trade_yesterday']=trade.trade_yesterday
+    trade_info['trade_high']=trade.trade_high
+    trade_info['trade_low']=trade.trade_low
+    trade_info['trade_moneyin']=trade.trade_moneyin
+    trade_info['trade_srise']=trade.trade_srise
+    trade_info['trade_sfall']=trade.trade_sfall
+    trade_info['trade_irise']=trade.trade_irise
+    trade_list = TradeInfo.objects.all()
+    # print(company_info)
+    return render(request,"trade_search_detail.html",{'data':trade_info,"trade_list":trade_list})
+
 def stock_search_detail(request,id):
     if(request.method=="GET"):
         SID=int(id)
