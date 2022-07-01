@@ -104,6 +104,7 @@ def register(request):
 # def Allrank(request):
 #     objs=StockInfo.objects.all()
 #     return render(request,"general.html",locals())
+
 @checkLogin
 def Allrank(request):
     return render(request,"Allrank.html",{'data':[{'no':stock.no,'id':stock.stock_id,'name':stock.stock_name,
