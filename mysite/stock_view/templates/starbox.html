@@ -263,12 +263,9 @@
                         <label for={{obj.id}}></label>
                       </div>
                     </td>
-                      <td><a href="http://127.0.0.1:8000/stock_search/{{ obj.stock_id }}/" target="_blank">{{ obj.stock_id }}</a></td>
-                      <td><a href="http://127.0.0.1:8000/stock_search/{{ obj.stock_id }}/" target="_blank">{{ obj.stock_name }}</a></td>
+                      <td><a href="http://127.0.0.1:8000/stock_search/{{ obj.id }}/" target="_blank">{{ obj.id }}</a></td>
+                      <td><a href="http://127.0.0.1:8000/stock_search/{{ obj.id }}/" target="_blank">{{ obj.stock_name }}</a></td>
                       <td>{{ obj.fav_date }}</td>
-                      <td>{{ obj.stock_id }}</td>
-
-
                   </tr>
                   {% endfor %}
                   </tbody>
