@@ -1,6 +1,6 @@
 
 from logging import Manager
-
+import time
 from turtle import st
 
 from django.http import JsonResponse
@@ -30,7 +30,6 @@ def checkLogin(func):
             return redirect('/gotologin')
     return warpper
 
-@checkLogin
 def index(request):
     stock_count=StockExternal.objects.all().count()
     company_count=CompanyInfo1.objects.all().count()
@@ -129,12 +128,6 @@ def test(request):
     return render(request,"test.html",locals())
 
 @checkLogin
-def trl(request):
-    trade_list = TradeInfo.objects.all()
-
-    return render(request,"trade_ranking_list.html",{"trade_list":trade_list})
-
-@checkLogin
 @csrf_exempt
 def stock_search(request):
     if(request.method=="GET"):
@@ -142,7 +135,20 @@ def stock_search(request):
     STOCK_ID=request.POST.get('myInput')
     print(STOCK_ID)
     return redirect("./"+STOCK_ID)
-    
+
+
+# @checkLogin
+@csrf_exempt
+def trade_search(request):
+    if(request.method=="GET"):
+        trade_name=[]
+        for trade in TradeInfo.objects.all():
+            trade_name.append(trade.trade_name)
+
+        return render(request,"trade_search.html",{'trade_name':trade_name})
+    name=request.POST.get('myInput')
+    # print(name)
+    return redirect("./"+name)
 
 
     
@@ -250,19 +256,51 @@ def company_search_detail(request,id):
     for i in range(0, len(manager)):
         m1=ManagerInfo.objects.get(manager_name=company_info[manager[i]])
         if m1:
-            manager_info[i]['manager_name'] = m1.manager_name
-            manager_info[i]['manager_gender'] = m1.manager_gender
-            manager_info[i]['manager_age'] = m1.manager_age
-            manager_info[i]['manager_edu'] = m1.manager_edu
-            manager_info[i]['manager_intro'] = m1.manager_intro
+            manager_info[i]['manager_name']=m1.manager_name
+            manager_info[i]['manager_gender']=m1.manager_gender
+            manager_info[i]['manager_age']=m1.manager_age
+            manager_info[i]['manager_edu']=m1.manager_edu
+            manager_info[i]['manager_intro']=m1.manager_intro
         else:
-            manager_info[i]['manager_name'] = "暂无信息"
-            manager_info[i]['manager_gender'] = "暂无信息"
-            manager_info[i]['manager_age'] = "暂无信息"
-            manager_info[i]['manager_edu'] = "暂无信息"
-            manager_info[i]['manager_intro'] = "暂无信息"
+            manager_info[i]['manager_name']="暂无信息"
+            manager_info[i]['manager_gender']="暂无信息"
+            manager_info[i]['manager_age']="暂无信息"
+            manager_info[i]['manager_edu']="暂无信息"
+            manager_info[i]['manager_intro']="暂无信息"
+    # print(manager_info[0])
     # print(company_info)
     return render(request,"company_search_detail.html",{'data':company_info,'manager':manager_info,'stock':stock_id,'company_name':company_name})
+
+
+@checkLogin
+@csrf_exempt
+def trade_search_detail(request,id):
+    # print(id)
+    if(request.method=="POST"):
+        name=request.POST.get('myInput')
+        return redirect("../"+name)
+    trade_name=[]
+    for trade in TradeInfo.objects.all():
+        trade_name.append(trade.trade_name)
+    trade=TradeInfo.objects.get(trade_name=id)
+    # print(company.company_name)
+    trade_info={}
+
+    trade_info['trade_name']=trade.trade_name
+    trade_info['trade_crise']=trade.trade_crise
+    trade_info['trade_goodmoney']=trade.trade_goodmoney
+    trade_info['trade_amount']=trade.trade_amount
+    trade_info['trade_today']=trade.trade_today
+    trade_info['trade_yesterday']=trade.trade_yesterday
+    trade_info['trade_high']=trade.trade_high
+    trade_info['trade_low']=trade.trade_low
+    trade_info['trade_moneyin']=trade.trade_moneyin
+    trade_info['trade_srise']=trade.trade_srise
+    trade_info['trade_sfall']=trade.trade_sfall
+    trade_info['trade_irise']=trade.trade_irise
+    trade_list = TradeInfo.objects.all()
+    # print(company_info)
+    return render(request,"trade_search_detail.html",{'data':trade_info,"trade_list":trade_list})
 
 def stock_search_detail(request,id):
     if(request.method=="GET"):
@@ -396,4 +434,30 @@ def changeUserInfo(request):
     except:
         context = {"info":"修改失败"}
     return JsonResponse({"msg": context})
+
+@checkLogin
+@csrf_exempt
+def deleteProduct(request):
+    mod = Favorite.objects
+    stock_id=request.POST.get('stock_id')
+    print(stock_id)
+    try:
+        mod.get(stock_id=stock_id,username=request.session['login_user']['user_name']).delete()
+        return JsonResponse({"msg": {"info":"取消收藏成功"}})
+    except:
+        return JsonResponse({"msg": {"info":"操作失败"}})
+
+
+@checkLogin
+@csrf_exempt
+def addProduct(request):
+    mod = Favorite.objects
+    stock_id=request.POST.get('stock_id')
+    now_date=time.localtime()
+    now_date=str(now_date[0])+str("-")+str(now_date[1]).zfill(2)+str("-")+str(now_date[2]).zfill(2)
+    try:
+        mod.create(stock_id=stock_id,username=request.session['login_user']['user_name'],fav_date=now_date) 
+        return JsonResponse({"msg":  {"info":"收藏成功"}})
+    except:
+        return JsonResponse({"msg": {"info":"操作失败"}})
 

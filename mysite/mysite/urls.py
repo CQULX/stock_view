@@ -28,11 +28,12 @@ urlpatterns = [
     path('user/add/',views.user_add),
     path('register/',views.register),
     path('test/',views.test),
-    path('trade_ranking_list/',views.trl),
     path('stock_search/',views.stock_search),
+    path('trade_search/',views.trade_search),
     path('starbox/',views.starbox),
     path('company_search/',views.company_search),
     path('company_search/<str:id>/', views.company_search_detail),
+    path('trade_search/<str:id>/', views.trade_search_detail),
     path('stock_search/<str:id>/',views.stock_search_detail),
     path('starbox/',views.starbox),
     path('userSettings/', views.Usersettings),
@@ -44,5 +45,7 @@ urlpatterns = [
     path('manager/',views.manager),
     path('notmanager/',views.noUseful),
     path('changeUserInfo/',views.changeUserInfo),
-    re_path(r'^trade/(.+)/$', views.get_trade)
+    re_path(r'^trade/(.+)/$', views.get_trade),
+    path('addProduct/',views.addProduct),
+    path('deleteProduct/',views.deleteProduct),
 ]
