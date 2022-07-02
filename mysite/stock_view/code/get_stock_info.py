@@ -6,13 +6,13 @@ import pymysql as mysql
 from sqlalchemy import create_engine
 import tqdm
 import bs4
-from mysite.mysite.settings import DATABASES
+from mysite.settings import DATABASES
 def update():
-    user_name=DATABASES['default']['USER']
+    user_name = DATABASES['default']['USER']
     password = DATABASES['default']['PASSWORD']
-    ip_address = DATABASES['default']['HOST']
+    ip = DATABASES['default']['HOST']
     port = DATABASES['default']['PORT']
-    con_string = ('mysql+pymysql://{}:{}@{}:{}/stock'.format(user_name,password,ip_address,port))
+    con_string = ('mysql+pymysql://{}:{}@{}:{}/stock'.format(user_name,password,ip,port))
     engine=create_engine(con_string) # 可用于to_sql和read_sql
 
     new_df=ak.stock_zh_a_spot_em()
