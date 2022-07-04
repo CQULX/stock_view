@@ -27,6 +27,6 @@ def main():
 
 
 if __name__ == '__main__':
-    process1=multiprocessing.Process(target=u,args=())
-    process1.start()
+    # process1=multiprocessing.Process(target=u,args=())
+    # process1.start()
     main()
