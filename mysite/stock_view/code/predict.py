@@ -67,9 +67,9 @@ def pre(stock_id):
     ip = DATABASES['default']['HOST']
     port = DATABASES['default']['PORT']
     # 打开数据库连接
-    db = pymysql.connect(host='10.236.66.44',
-                         user='lx',
-                         password='123456',
+    db = pymysql.connect(host=ip,
+                         user=user_name,
+                         password=password,
                          database='stock')
 
     # 使用cursor()方法获取操作游标
@@ -130,6 +130,21 @@ def pre(stock_id):
     scalery.fit_transform(stock_datay)
     # joblib.dump(scaler,'scaler')
     # print(scaledData1.shape)
+
+    #缺失数据处理
+    for i in range(scaledData1.shape[1]):
+        # 获取当前列数据
+        temp_col = scaledData1[:, i]
+        # 判断当前列的数据中是否含有nan
+        nan_num = np.count_nonzero(temp_col != temp_col)
+        if nan_num != 0:
+            temp_col_not_nan = temp_col[temp_col == temp_col]
+            # 将nan替换成这一列的平均值
+            try:
+                temp_col[np.isnan(temp_col)] = np.mean(temp_col_not_nan)
+            except:
+                temp_col[np.isnan(temp_col)]=0
+
 
     n_steps_in =50 #历史时间长度
     n_steps_out=7#预测时间长度

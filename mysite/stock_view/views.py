@@ -499,3 +499,4 @@ def predictStock(request):
         tmp.append(float(info[0]))
         stock_future_list.append(tmp)
     return JsonResponse({"stock_future_list": stock_future_list})
+    
