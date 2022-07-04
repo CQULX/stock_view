@@ -541,7 +541,9 @@
 		          type:"post",
 		          data:{"stock_id":$(stock_id_name).val()},
 		            success:function(result){
-                  
+                  if(result.msg =="预测失败，数据量不足"){
+                    document.getElementById('preprepre').innerText=result.msg;
+                  return;}
                   document.getElementById('preprepre').innerText="预测完成";
         var chartDom = document.getElementById('k_line_future');
         var myChart2 = echarts.init(chartDom);

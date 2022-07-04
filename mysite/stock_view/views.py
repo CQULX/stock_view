@@ -484,19 +484,22 @@ def predictStock(request):
         return (ds-dt).strftime("%Y-%m-%d")
     stock_id=request.POST.get('stock_id')
     print(stock_id)
-    result,rmse=pre(stock_id)
-    nowdate = time.strftime("%Y-%m-%d")
-    for i in range(49):
-        nowdate=prev_day(nowdate)
-    stock_future_list=[]
-    for info in result:
-        tmp=[]
-        tmp.append(nowdate.replace('-','/'))
-        nowdate=next_day(nowdate)
-        tmp.append(float(info[2]))
-        tmp.append(float(info[3]))
-        tmp.append(float(info[1]))
-        tmp.append(float(info[0]))
-        stock_future_list.append(tmp)
-    return JsonResponse({"stock_future_list": stock_future_list})
+    try:
+        stock_future_list=[]
+        result,rmse=pre(stock_id)
+        nowdate = time.strftime("%Y-%m-%d")
+        for i in range(49):
+            nowdate=prev_day(nowdate)
+        for info in result:
+            tmp=[]
+            tmp.append(nowdate.replace('-','/'))
+            nowdate=next_day(nowdate)
+            tmp.append(float(info[2]))
+            tmp.append(float(info[3]))
+            tmp.append(float(info[1]))
+            tmp.append(float(info[0]))
+            stock_future_list.append(tmp)
+        return JsonResponse({"stock_future_list": stock_future_list,"msg":"预测成功"})
+    except:
+        return JsonResponse({"stock_future_list": stock_future_list,"msg":"预测失败，数据量不足"})
     
