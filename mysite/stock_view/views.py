@@ -19,7 +19,8 @@ from stock_view.models import Favorite
 import math
 from stock_view.code.get_stock_info import update
 from stock_view.code.get_now_data import get_1a0001,get_399001,get_399006,get_numUpAndDown
-
+from stock_view.code.predict import pre
+import datetime
 # Create your views here.
 
 def checkLogin(func):
@@ -464,3 +465,37 @@ def addProduct(request):
     except:
         return JsonResponse({"msg": {"info":"操作失败"}})
 
+
+def predictStock(request):
+    def next_day(date_str):
+        ds = datetime.datetime.strptime(date_str, "%Y-%m-%d")
+        if ds.weekday()==4:
+            dt = datetime.timedelta(hours=72)
+        else:
+            dt = datetime.timedelta(hours=24)
+        return (ds+dt).strftime("%Y-%m-%d")
+    #昨天的函数类似
+    def prev_day(date_str):
+        ds = datetime.datetime.strptime(date_str, "%Y-%m-%d")
+        if ds.weekday()==0:
+            dt = datetime.timedelta(hours=72)
+        else:
+            dt = datetime.timedelta(hours=24)
+        return (ds-dt).strftime("%Y-%m-%d")
+    stock_id=request.POST.get('stock_id')
+    print(stock_id)
+    result,rmse=pre(stock_id)
+    nowdate = time.strftime("%Y-%m-%d")
+    for i in range(49):
+        nowdate=prev_day(nowdate)
+    stock_future_list=[]
+    for info in result:
+        tmp=[]
+        tmp.append(nowdate.replace('-','/'))
+        nowdate=next_day(nowdate)
+        tmp.append(float(info[2]))
+        tmp.append(float(info[3]))
+        tmp.append(float(info[1]))
+        tmp.append(float(info[0]))
+        stock_future_list.append(tmp)
+    return JsonResponse({"stock_future_list": stock_future_list})

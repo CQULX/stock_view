@@ -48,4 +48,5 @@ urlpatterns = [
     re_path(r'^trade/(.+)/$', views.get_trade),
     path('addProduct/',views.addProduct),
     path('deleteProduct/',views.deleteProduct),
+    path('pre/',views.predictStock),
 ]
