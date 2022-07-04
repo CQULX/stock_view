@@ -2,15 +2,10 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-import multiprocessing
 from stock_view.code.get_stock_info import update
 import time
 
-def u():
-    while 1:
-        update()
-        print("更新股票数据")
-        time.sleep(60*5)
+
 
 def main():
     """Run administrative tasks."""
@@ -27,6 +22,4 @@ def main():
 
 
 if __name__ == '__main__':
-    # process1=multiprocessing.Process(target=u,args=())
-    # process1.start()
     main()
