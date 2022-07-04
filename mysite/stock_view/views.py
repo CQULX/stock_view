@@ -199,7 +199,7 @@ def deleteProductByIdList(request):
         # 遍历id数组
         for id in idlist:
             # 删除对应id的记录
-            mod.get(id=id).delete()
+            mod.get(stock_id=id).delete()
         context = {"info": "删除成功"}
     except Exception as res:
         context = {"info": str(res)}

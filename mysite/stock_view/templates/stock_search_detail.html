@@ -140,7 +140,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="../trade_search" class="nav-link">
+              <a href="../../trade_search" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>行业查询</p>
               </a>
@@ -237,20 +237,7 @@
                   <i class="fas fa-minus"></i>
                 </button>
                 <div class="btn-group">
-                  <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                    <i class="fas fa-wrench"></i>
-                  </button>
-                  <div class="dropdown-menu dropdown-menu-right" role="menu">
-                    <a href="#" class="dropdown-item">Action</a>
-                    <a href="#" class="dropdown-item">Another action</a>
-                    <a href="#" class="dropdown-item">Something else here</a>
-                    <a class="dropdown-divider"></a>
-                    <a href="#" class="dropdown-item">Separated link</a>
-                  </div>
                 </div>
-                <button type="button" class="btn btn-tool" data-card-widget="remove">
-                  <i class="fas fa-times"></i>
-                </button>
               </div>
             </div>
             <!-- /.card-header -->
@@ -493,25 +480,69 @@
               <!-- /.row -->
             </div>
             <!-- /.card-footer -->
-            <div class="col-lg-3 col-6">
-                <!-- small box -->
-                <div class="small-box">
-                  <div class="inner">
-                    <h3 style="font-size: 10px;">{{c_name}}</h3>
-                    <p>公司详情</p>
-                  </div>
-                  <div class="icon">
-                    <i class="ion ion-person-add"></i>
-                  </div>
-                  <a href="../../company_search/{{c_name}}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
-                </div>
-              </div>
           </div>
           <!-- /.card -->
         </div>
         <!-- /.col -->
       </div>
       <!-- /.row -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title">预测K线图</h5>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+                <div class="btn-group">
+                </div>
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-11">
+                  <p class="text-center">
+                    <strong value={{name|safe}}>{{name|safe}}</strong>
+                  </p>
+
+                  <div class="chart">
+                    <!-- Sales Chart Canvas -->
+                    <div id="k_line_predict" style="height:500px;width:1200px"></div>
+                  </div>
+                  <!-- /.chart-responsive -->
+                </div>
+                <!-- /.col -->
+                  <input hidden id="stock_id_name" value={{name|safe}}>
+                  <!-- /.progress-group -->
+                </div>
+                <!-- /.col -->
+              </div>
+              <!-- /.row -->
+            </div>
+              </div>
+              <!-- /.row -->
+            </div>
+            <!-- /.card-footer -->
+          </div>
+          <!-- /.card -->
+        </div>
+        <div class="col-lg-3 col-6">
+          <!-- small box -->
+          <div class="small-box">
+            <div class="inner">
+              <h3 style="font-size: 10px;">{{c_name}}</h3>
+              <p>公司详情</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-person-add"></i>
+            </div>
+            <a href="../../company_search/{{c_name}}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- /.col -->
+      </div>
     <script>
         var chartDom = document.getElementById('k_line');
         var myChart = echarts.init(chartDom);
@@ -730,6 +761,224 @@
 
         option && myChart.setOption(option);
     </script>
+    <script>
+      var chartDom = document.getElementById('k_line_predict');
+      var myChart = echarts.init(chartDom);
+      var option;
+      var stock_name='{{name|safe}}';
+      const upColor1 = '#ec0000';
+      const upBorderColor1 = '#8A0000';
+      const downColor1 = '#00da3c';
+      const downBorderColor1 = '#008F28';
+      // Each item: open，close，lowest，highest
+      const data1 = splitData({{stock_info_list|safe}});
+      function splitData(rawData) {
+        const categoryData = [];
+        const values = [];
+        for (var i = 0; i < rawData.length; i++) {
+          categoryData.push(rawData[i].splice(0, 1)[0]);
+          values.push(rawData[i]);
+        }
+        return {
+          categoryData: categoryData,
+          values: values
+        };
+      }
+      function calculateMA(dayCount) {
+        var result = [];
+        for (var i = 0, len = data0.values.length; i < len; i++) {
+          if (i < dayCount) {
+            result.push('-');
+            continue;
+          }
+          var sum = 0;
+          for (var j = 0; j < dayCount; j++) {
+            sum += +data0.values[i - j][1];
+          }
+          result.push(sum / dayCount);
+        }
+        return result;
+      }
+      option = {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross'
+          }
+        },
+        legend: {
+          data: ['日K', 'MA5', 'MA10', 'MA20', 'MA30']
+        },
+        grid: {
+          left: '10%',
+          right: '10%',
+          bottom: '15%'
+        },
+        xAxis: {
+          type: 'category',
+          data: data0.categoryData,
+          boundaryGap: false,
+          axisLine: { onZero: false },
+          splitLine: { show: false },
+          min: 'dataMin',
+          max: 'dataMax'
+        },
+        yAxis: {
+          scale: true,
+          splitArea: {
+            show: true
+          }
+        },
+        dataZoom: [
+          {
+            type: 'inside',
+            start: 50,
+            end: 100
+          },
+          {
+            show: true,
+            type: 'slider',
+            top: '90%',
+            start: 50,
+            end: 100
+          }
+        ],
+        series: [
+          {
+            name: '日K',
+            type: 'candlestick',
+            data: data0.values,
+            itemStyle: {
+              color: upColor1,
+              color0: downColor1,
+              borderColor: upBorderColor1,
+              borderColor0: downBorderColor1
+            },
+            markPoint: {
+              label: {
+                formatter: function (param) {
+                  return param != null ? Math.round(param.value) + '' : '';
+                }
+              },
+              data: [
+                {
+                  name: 'Mark',
+                  coord: ['2013/5/31', 2300],
+                  value: 2300,
+                  itemStyle: {
+                    color: 'rgb(41,60,85)'
+                  }
+                },
+                {
+                  name: 'highest value',
+                  type: 'max',
+                  valueDim: 'highest'
+                },
+                {
+                  name: 'lowest value',
+                  type: 'min',
+                  valueDim: 'lowest'
+                },
+                {
+                  name: 'average value on close',
+                  type: 'average',
+                  valueDim: 'close'
+                }
+              ],
+              tooltip: {
+                formatter: function (param) {
+                  return param.name + '<br>' + (param.data.coord || '');
+                }
+              }
+            },
+            markLine: {
+              symbol: ['none', 'none'],
+              data: [
+                [
+                  {
+                    name: 'from lowest to highest',
+                    type: 'min',
+                    valueDim: 'lowest',
+                    symbol: 'circle',
+                    symbolSize: 10,
+                    label: {
+                      show: false
+                    },
+                    emphasis: {
+                      label: {
+                        show: false
+                      }
+                    }
+                  },
+                  {
+                    type: 'max',
+                    valueDim: 'highest',
+                    symbol: 'circle',
+                    symbolSize: 10,
+                    label: {
+                      show: false
+                    },
+                    emphasis: {
+                      label: {
+                        show: false
+                      }
+                    }
+                  }
+                ],
+                {
+                  name: 'min line on close',
+                  type: 'min',
+                  valueDim: 'close'
+                },
+                {
+                  name: 'max line on close',
+                  type: 'max',
+                  valueDim: 'close'
+                }
+              ]
+            }
+          },
+          {
+            name: 'MA5',
+            type: 'line',
+            data: calculateMA(5),
+            smooth: true,
+            lineStyle: {
+              opacity: 0.5
+            }
+          },
+          {
+            name: 'MA10',
+            type: 'line',
+            data: calculateMA(10),
+            smooth: true,
+            lineStyle: {
+              opacity: 0.5
+            }
+          },
+          {
+            name: 'MA20',
+            type: 'line',
+            data: calculateMA(20),
+            smooth: true,
+            lineStyle: {
+              opacity: 0.5
+            }
+          },
+          {
+            name: 'MA30',
+            type: 'line',
+            data: calculateMA(30),
+            smooth: true,
+            lineStyle: {
+              opacity: 0.5
+            }
+          }
+        ],
+      };
+
+      option && myChart.setOption(option);
+  </script>
     <script type="text/javascript">
       var sites =['430510', '300539', '301199', '300859', '300503', '300758', '300097', '688320', '870436', '873223', '300747', '837092', '688103', '688676', '300458', '301073', '688686', '688003', '688173', '300575', '688510', '688165', '688262', '688323', '835174', '688276', '002168', '002547', '600219', '300508', '002337', '002228', '600609', '002689', '002540', '000561', '603036', '600272', '600725', '002631', '002951', '000721', '000622', '002428', '603936', '600560', '603656', '603758', '002843', '002289', '600835', '600818', '002355', 
 '603662', '002166', '600006', '001208', '601717', '600348', '002373', '002101', '000530', '002334', '002907', '002283', '003019', '603199', '000610', '003021', '002805', '603005', '001316', '603677', '002079', '002892', '001226', '603010', '002623', '002977', '002407', '600745', '603917', '603551', '603102', '601677', '601608', '600579', '600203', '002976', '002953', '002917', '002797', '002724', '002707', '002655', '002379', '002188', '002182', '002129', '002121', '002056', '000970', '000892', '000625', '000572', '001212', '603051', '002838', '000821', '605118', '003028', '300885', '002896', '002058', '002747', '002514', '000697', '000868', '002036', '002006', '603663', '600071', '003030', '000899', '603191', '600860', '002909', '002890', '000020', '002033', '002454', '002866', '000856', '605580', '600503', '002523', '002703', '605050', '600213', '002926', '600777', '603790', '002786', '603015', '002451', '600353', '002347', '000070', '601975', '600469', '002031', '000428', '600653', '603666', '300507', '300115', '300671', '002123', '002397', '603311', '688255', '300853', '688138', '688187', '300565', '603416', '600593', '600106', '002635', '688355', '600009', '603136', '688190', '832491', '600256', '600749', '600460', '300161', '300046', '688090', '300183', '837212', '300809', '300403', '301087', '002729', '836826', '300134', '603322', '000988', '600982', '833454', '300990', '603920', '300667', '300322', '688787', '300223', '300128', '301013', '002059', '300549', '300647', '688395', '603301', '688160', '300360', '600995', '603306', '000829', '000524', '300577', '600418', '300144', '430489', '300573', '000978', '603076', '300655', '300225', '600234', '832000', '603733', '601007', '688595', '300286', '601127', '600971', '301019', '600520', 
