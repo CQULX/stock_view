@@ -20,7 +20,7 @@ from stock_view import views
 urlpatterns = [
     path('rankByMap/',views.rankByMap),
     path('rankByTrade/', views.rankByTrade),
-    path('Allrank.html/',views.Allrank),
+    path('Allrank/',views.Allrank),
     path('',views.login),
     path('index/', views.index),
     path('login/',views.login),

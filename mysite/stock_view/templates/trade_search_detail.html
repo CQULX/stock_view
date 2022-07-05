@@ -248,7 +248,10 @@
             /*循环数组*/
             for (i = 0; i < arr.length; i++) {
               /*检查填充项是否有与文本字段值相同的内容，不区分大小写*/
-              if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+              if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()||arr[i].substr(1, val.length).toUpperCase() == val.toUpperCase()
+              ||arr[i].substr(2, val.length).toUpperCase() == val.toUpperCase()||arr[i].substr(3, val.length).toUpperCase() == val.toUpperCase()
+              ||arr[i].substr(4, val.length).toUpperCase() == val.toUpperCase()||arr[i].substr(5, val.length).toUpperCase() == val.toUpperCase()
+              ||arr[i].substr(6, val.length).toUpperCase() == val.toUpperCase()) {
                 /*为每个匹配元素创建一个 DIV 元素 */
                 b = document.createElement("DIV");
                 /*匹配项加粗*/
@@ -500,7 +503,7 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <table id="example2" class="table table-bordered table-hover">
+                <table id="example1" class="table table-bordered table-striped">
                   <thead>
                   <tr>
                     <th>行业名称</th>
