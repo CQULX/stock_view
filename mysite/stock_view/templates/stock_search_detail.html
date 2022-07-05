@@ -626,16 +626,33 @@
               end: 100
             }
           ],
+          visualMap: {
+        show: false,
+        seriesIndex: 0,
+        dimension:0,
+        pieces: [
+          {
+            gt:0,
+            lt:50,
+            colorAlpha: 1
+          },
+          {
+            gt:49,
+            lt:57,
+            colorAlpha: 0.1
+          }
+        ]
+      },
           series: [
             {
               name: '日K',
               type: 'candlestick',
               data: data0.values,
               itemStyle: {
-                color: upColor,
-                color0: downColor,
-                borderColor: upBorderColor,
-                borderColor0: downBorderColor
+              color: upColor,
+              color0: downColor,
+              borderColor: upBorderColor,
+              borderColor0: downBorderColor
               },
               markPoint: {
                 label: {
