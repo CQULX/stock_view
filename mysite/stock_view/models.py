@@ -164,7 +164,7 @@ class TradeInfo(models.Model):
 
 class UserInfo(models.Model):
     id = models.AutoField(primary_key=True)
-    password = models.IntegerField()
+    password = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     isManager = models.BooleanField()
     isSuperManager = models.BooleanField()

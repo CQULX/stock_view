@@ -71,7 +71,7 @@ def login(request):
         return render(request,"login.html")
     Nam=request.POST.get('account')
     pwd=request.POST.get('password')
-    name_obj=UserInfo.objects.filter(name=Nam,password=pwd)
+    name_obj=UserInfo.objects.filter(name=Nam,password=str(pwd))
     if(len(name_obj)!=0):
         request.session['login_user']={
                                 'user_name':Nam,
@@ -382,11 +382,11 @@ def changeMyPassword(request):
     print(Myid)
     oldpassword = request.POST.get('oldpassword')
     newpassword = request.POST.get('newpassword')
-    name_obj=UserInfo.objects.filter(id=Myid,password=oldpassword)
+    name_obj=UserInfo.objects.filter(id=Myid,password=str(oldpassword))
     if len(name_obj)==0:
         return JsonResponse({"msg":{"info":"密码错误"}})
     try:
-        mod.filter(id=Myid).update(password=newpassword)
+        mod.filter(id=Myid).update(password=str(newpassword))
         context = {"info":"修改成功"}
     except:
         context = {"info":"修改失败"}
