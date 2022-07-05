@@ -252,7 +252,18 @@
             /*循环数组*/
             for (i = 0; i < arr.length; i++) {
               /*检查填充项是否有与文本字段值相同的内容，不区分大小写*/
-              if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+              if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()||(arr[i].substr(1, val.length).toUpperCase() == val.toUpperCase())
+              ||(arr[i].substr(2, val.length).toUpperCase() == val.toUpperCase())||(arr[i].substr(3, val.length).toUpperCase() == val.toUpperCase())
+              ||(arr[i].substr(4, val.length).toUpperCase() == val.toUpperCase())||(arr[i].substr(5, val.length).toUpperCase() == val.toUpperCase())
+              ||(arr[i].substr(6, val.length).toUpperCase() == val.toUpperCase())||(arr[i].substr(7, val.length).toUpperCase() == val.toUpperCase())
+              ||(arr[i].substr(8, val.length).toUpperCase() == val.toUpperCase())||(arr[i].substr(9, val.length).toUpperCase() == val.toUpperCase())
+              ||(arr[i].substr(10, val.length).toUpperCase() == val.toUpperCase())||(arr[i].substr(11, val.length).toUpperCase() == val.toUpperCase())
+              ||(arr[i].substr(12, val.length).toUpperCase() == val.toUpperCase())||(arr[i].substr(13, val.length).toUpperCase() == val.toUpperCase())
+              ||(arr[i].substr(14, val.length).toUpperCase() == val.toUpperCase())||(arr[i].substr(15, val.length).toUpperCase() == val.toUpperCase())
+              ||(arr[i].substr(16, val.length).toUpperCase() == val.toUpperCase())||(arr[i].substr(17, val.length).toUpperCase() == val.toUpperCase())
+              ||(arr[i].substr(18, val.length).toUpperCase() == val.toUpperCase())||(arr[i].substr(19, val.length).toUpperCase() == val.toUpperCase())
+              ||(arr[i].substr(20, val.length).toUpperCase() == val.toUpperCase())||(arr[i].substr(21, val.length).toUpperCase() == val.toUpperCase())
+              ||(arr[i].substr(22, val.length).toUpperCase() == val.toUpperCase())||(arr[i].substr(23, val.length).toUpperCase() == val.toUpperCase())) {
                 /*为每个匹配元素创建一个 DIV 元素 */
                 b = document.createElement("DIV");
                 /*匹配项加粗*/
