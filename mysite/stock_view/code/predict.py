@@ -1,4 +1,5 @@
 import pymysql
+import joblib
 from math import sqrt
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
@@ -9,11 +10,13 @@ try:
     from keras.layers import Dense
     from keras.layers import LSTM
     from keras.layers import Dropout
+    from keras.models import load_model
 except:
     from tensorflow.keras import Sequential
     from tensorflow.keras.layers import Dense
     from tensorflow.keras.layers import LSTM
     from tensorflow.keras.layers import Dropout
+    from tensorflow.keras.models import load_model
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import numpy as np
@@ -68,9 +71,9 @@ def pre(stock_id):
     port = DATABASES['default']['PORT']
     # 打开数据库连接
     db = pymysql.connect(host=ip,
-                         user=user_name,
-                         password=password,
-                         database='stock')
+                        user=user_name,
+                        password=password,
+                        database='stock')
 
     # 使用cursor()方法获取操作游标
     cursor = db.cursor()
@@ -124,88 +127,92 @@ def pre(stock_id):
 
     # 关闭数据库连接
     db.close()
-    scaler = MinMaxScaler(feature_range=(0, 1))
-    scaledData1 = scaler.fit_transform(stock_data)
-    scalery = MinMaxScaler(feature_range=(0, 1))
-    scalery.fit_transform(stock_datay)
-    # joblib.dump(scaler,'scaler')
-    # print(scaledData1.shape)
+    try:    
+        model=load_model('./mysite/stock_view/code/model/model{}.h5'.format(stock_id))
+        print("存在训练好的模型")
+        scaler=joblib.load('./mysite/stock_view/code/scaler/scaler{}'.format(stock_id))
+        scalery=joblib.load('./mysite/stock_view/code/scaler/scalery{}'.format(stock_id))
+        rmse = None
+    except:
+        scaler = MinMaxScaler(feature_range=(0, 1))
+        scaledData1 = scaler.fit_transform(stock_data)
+        scalery = MinMaxScaler(feature_range=(0, 1))
+        scalery.fit_transform(stock_datay)
 
-    #缺失数据处理
-    for i in range(scaledData1.shape[1]):
-        # 获取当前列数据
-        temp_col = scaledData1[:, i]
-        # 判断当前列的数据中是否含有nan
-        nan_num = np.count_nonzero(temp_col != temp_col)
-        if nan_num != 0:
-            temp_col_not_nan = temp_col[temp_col == temp_col]
-            # 将nan替换成这一列的平均值
-            try:
-                temp_col[np.isnan(temp_col)] = np.mean(temp_col_not_nan)
-            except:
-                temp_col[np.isnan(temp_col)]=0
-
-
-    n_steps_in =50 #历史时间长度
-    n_steps_out=7#预测时间长度
-    processedData1 = time_series_to_supervised(scaledData1,n_steps_in,n_steps_out)
-    # print(processedData1.head())
-
-    # data_x = processedData1.loc[:,'0(t-'+str(n_steps_in)+')':'3(t-1)']
-    # data_y = processedData1.loc[:,'0':'3']
-
-    data_x = processedData1.loc[:, '0(t-' + str(n_steps_in) + ')':'{}(t-1)'.format(12 - 1)]
-    data_y = processedData1.loc[:, ['0', '1', '2', '3', '0(t+1)', '1(t+1)', '2(t+1)', '3(t+1)',
-                                    '0(t+2)', '1(t+2)', '2(t+2)', '3(t+2)', '0(t+3)', '1(t+3)', '2(t+3)', '3(t+3)',
-                                    '0(t+4)', '1(t+4)', '2(t+4)', '3(t+4)', '0(t+5)', '1(t+5)', '2(t+5)', '3(t+5)',
-                                    '0(t+6)', '1(t+6)', '2(t+6)', '3(t+6)']]
-
-    train_X1,test_X1, train_y, test_y = train_test_split(data_x.values, data_y.values, test_size=0.3, random_state=343)
-    # reshape input to be 3D [samples, timesteps, features]
-    train_X = train_X1.reshape((train_X1.shape[0], n_steps_in, scaledData1.shape[1]))
-    test_X = test_X1.reshape((test_X1.shape[0], n_steps_in, scaledData1.shape[1]))
-
-    print(train_X.shape, train_y.shape, test_X.shape, test_y.shape)
-    # design network
-    model = Sequential()
-    model.add(LSTM(96,return_sequences=True, input_shape=(train_X.shape[1], train_X.shape[2])))
-    model.add(Dropout(0.2))
-    model.add(LSTM(64, return_sequences=False))  # returns a sequence of vectors of dimension 32
-    model.add(Dropout(0.2))
-    model.add(Dense(32))
-    model.add(Dropout(0.2))
-    model.add(Dense(train_y.shape[1]))
-    model.compile(loss='mse', optimizer='adam')
-    # print(model.summary())
-
-    # fit network
-    # model=load_model('./model/pre_model300812.h5')
-    history = model.fit(train_X, train_y, epochs=10, batch_size=64, validation_data=(test_X, test_y), verbose=2,
-                        shuffle=False)
-
-    # model.save('./model_multi_lstm.h5')
-
-    # # plot history
-    plt.plot(history.history['loss'], label='train')
-    plt.plot(history.history['val_loss'], label='test')
-    plt.legend()
-
-    plt.savefig('./history.jpg')
-
-    # plt.show()
-     # 预测
-    yhat = model.predict(test_X)
-    # 逆转预测值
-    # print(yhat[:,2])
-    # scaler=joblib.load('./scaler_all/scaler300812')
+        joblib.dump(scaler,'./mysite/stock_view/code/scaler/scaler{}'.format(stock_id))
+        joblib.dump(scalery,'./mysite/stock_view/code/scaler/scalery{}'.format(stock_id))
+        # print(scaledData1.shape)
+        #缺失数据处理
+        for i in range(scaledData1.shape[1]):
+            # 获取当前列数据
+            temp_col = scaledData1[:, i]
+            # 判断当前列的数据中是否含有nan
+            nan_num = np.count_nonzero(temp_col != temp_col)
+            if nan_num != 0:
+                temp_col_not_nan = temp_col[temp_col == temp_col]
+                # 将nan替换成这一列的平均值
+                try:
+                    temp_col[np.isnan(temp_col)] = np.mean(temp_col_not_nan)
+                except:
+                    temp_col[np.isnan(temp_col)]=0
 
 
-    # 计算均方根误差
-    rmsetmp=[]
-    for i in range(28):
-        rmsetmp.append(sqrt(mean_squared_error(test_y[:, i], yhat[:, i])))
-    rmse = sum(rmsetmp) / len(rmsetmp)
-    print('Test RMSE: %.3f' % rmse)
+        n_steps_in =50 #历史时间长度
+        n_steps_out=7#预测时间长度
+        processedData1 = time_series_to_supervised(scaledData1,n_steps_in,n_steps_out)
+        # print(processedData1.head())
+
+        # data_x = processedData1.loc[:,'0(t-'+str(n_steps_in)+')':'3(t-1)']
+        # data_y = processedData1.loc[:,'0':'3']
+
+        data_x = processedData1.loc[:, '0(t-' + str(n_steps_in) + ')':'{}(t-1)'.format(12 - 1)]
+        data_y = processedData1.loc[:, ['0', '1', '2', '3', '0(t+1)', '1(t+1)', '2(t+1)', '3(t+1)',
+                                        '0(t+2)', '1(t+2)', '2(t+2)', '3(t+2)', '0(t+3)', '1(t+3)', '2(t+3)', '3(t+3)',
+                                        '0(t+4)', '1(t+4)', '2(t+4)', '3(t+4)', '0(t+5)', '1(t+5)', '2(t+5)', '3(t+5)',
+                                        '0(t+6)', '1(t+6)', '2(t+6)', '3(t+6)']]
+
+        train_X1,test_X1, train_y, test_y = train_test_split(data_x.values, data_y.values, test_size=0.3, random_state=343)
+        # reshape input to be 3D [samples, timesteps, features]
+        train_X = train_X1.reshape((train_X1.shape[0], n_steps_in, scaledData1.shape[1]))
+        test_X = test_X1.reshape((test_X1.shape[0], n_steps_in, scaledData1.shape[1]))
+        # design network
+        model = Sequential()
+        model.add(LSTM(96,return_sequences=True, input_shape=(train_X.shape[1], train_X.shape[2])))
+        model.add(Dropout(0.2))
+        model.add(LSTM(64, return_sequences=False))  # returns a sequence of vectors of dimension 32
+        model.add(Dropout(0.2))
+        model.add(Dense(32))
+        model.add(Dropout(0.2))
+        model.add(Dense(train_y.shape[1]))
+        model.compile(loss='mse', optimizer='adam')
+        # print(model.summary())
+        # fit network
+        history = model.fit(train_X, train_y, epochs=10, batch_size=64, validation_data=(test_X, test_y), verbose=2,
+                            shuffle=False)
+
+        model.save('./mysite/stock_view/code/model/model{}.h5'.format(stock_id))
+            # # plot history
+        plt.plot(history.history['loss'], label='train')
+        plt.plot(history.history['val_loss'], label='test')
+        plt.legend()
+
+        plt.savefig('./history.jpg')
+
+
+        # plt.show()
+        # 预测
+        yhat = model.predict(test_X)
+        # 逆转预测值
+        # print(yhat[:,2])
+        # scaler=joblib.load('./scaler_all/scaler300812')
+
+
+        # 计算均方根误差
+        rmsetmp=[]
+        for i in range(28):
+            rmsetmp.append(sqrt(mean_squared_error(test_y[:, i], yhat[:, i])))
+        rmse = sum(rmsetmp) / len(rmsetmp)
+        print('Test RMSE: %.3f' % rmse)
 
     test_X=stock_data[-51:-1]
     test_X=scaler.transform(test_X)
