@@ -374,6 +374,7 @@ def UserInfoSet(request):
     print(Myid)
     try:
         mod.filter(id=Myid).update(name=newname)
+        request.session['login_user']['user_name']=newname
         context = {"info":"修改成功"}
     except:
         context = {"info":"修改失败"}
