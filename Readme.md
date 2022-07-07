@@ -1,0 +1,2 @@
+进入mysite文件夹
+执行命令python manager.py runserver运行前端界面

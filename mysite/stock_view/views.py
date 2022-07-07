@@ -37,15 +37,20 @@ def index(request):
     company_count=CompanyInfo1.objects.all().count()
     user_count=UserInfo.objects.all().count()
     trade_count=TradeInfo.objects.all().count()
-    shang_time,shang_value=get_1a0001()
-    shang_time[0]='0930'
-    shen_time,shen_value=get_399001()
-    shen_time[0]='0930'
-    chuang_time,chuang_value=get_399006()
-    chuang_time[0]='0930'
-    shang_value =list(map(float,shang_value))
-    shen_value =list(map(float,shen_value))
-    chuang_value =list(map(float,chuang_value))
+    try:
+        shang_time,shang_value=get_1a0001()
+        shang_time[0]='0930'
+        shen_time,shen_value=get_399001()
+        shen_time[0]='0930'
+        chuang_time,chuang_value=get_399006()
+        chuang_time[0]='0930'
+        shang_value =list(map(float,shang_value))
+        shen_value =list(map(float,shen_value))
+        chuang_value =list(map(float,chuang_value))
+    except:
+        shang_value =[]
+        shen_value =[]
+        chuang_value =[]
     up_and_down=get_numUpAndDown()
     stock_sum=0
     for x in up_and_down:
